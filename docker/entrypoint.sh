@@ -48,6 +48,10 @@ fi
 echo "==> Estableciendo permisos"
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+# mPDF necesita escribir en su directorio cache
+mkdir -p vendor/mpdf/mpdf/tmp 2>/dev/null || true
+chmod -R 775 vendor/mpdf/mpdf/tmp 2>/dev/null || true
+chown -R www-data:www-data vendor/mpdf/mpdf/tmp 2>/dev/null || true
 
 # 6. Storage link
 echo "==> Creando storage:link"
