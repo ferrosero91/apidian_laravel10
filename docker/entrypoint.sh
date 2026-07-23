@@ -9,19 +9,18 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-# 2. Instalar dependencias PHP
-echo "==> Ejecutando composer install"
-composer install --no-dev --optimize-autoloader --no-interaction --no-progress
-
-# 3. Generar APP_KEY si esta vacio
-KEY_STATUS=$(php -r "echo (empty(env('APP_KEY')) ? 'empty' : 'set');" 2>/dev/null || echo "empty")
-if grep -q "^APP_KEY=$\|^APP_KEY=\"\"" .env 2>/dev/null; then
+# 2. Generar APP_KEY SIEMPRE antes de todo (necesario para artisan)
+echo "==> Verificando APP_KEY"
+if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
     echo "==> Generando APP_KEY"
     php artisan key:generate --force
 fi
 
+# 3. Instalar dependencias PHP
+echo "==> Ejecutando composer install"
+composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
 # 4. Descomprimir storage.zip si no existe el esqueleto
-#    (se copio a /tmp en el Dockerfile para que sobreviva al volumen mount)
 if [ ! -d "storage/app/public" ]; then
     if [ -f "/tmp/storage.zip" ]; then
         echo "==> Descomprimiendo storage.zip desde /tmp"
@@ -77,19 +76,22 @@ echo "==> MariaDB conectada"
 echo "==> Ejecutando migraciones"
 php artisan migrate --force
 
-# 10. Seeders (solo si la tabla esta vacia)
+# 10. Seeders
 echo "==> Verificando seeders"
 php artisan db:seed --force 2>/dev/null || true
 
-# 11. Cache
-echo "==> Generando cache de configuracion"
+# 11. Limpiar toda la cache primero
+echo "==> Limpiando cache"
+php artisan cache:clear 2>/dev/null || true
+php artisan config:clear 2>/dev/null || true
+php artisan route:clear 2>/dev/null || true
+php artisan view:clear 2>/dev/null || true
+
+# 12. Re-generar cache (orden correcto: config primero)
+echo "==> Generando cache"
 php artisan config:cache
 php artisan route:cache 2>/dev/null || echo "    route:cache omitido (rutas duplicadas)"
 php artisan view:cache 2>/dev/null || true
-
-# 12. Limpiar y re-cachear config
-php artisan cache:clear 2>/dev/null || true
-php artisan config:cache
 
 echo "==> APIDIAN listo. Iniciando servicios..."
 
