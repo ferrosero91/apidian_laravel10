@@ -66,64 +66,6 @@
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-        }
-        body {
-            background: var(--bg-body) !important;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-        .page-header {
-            background: transparent !important;
-            border-bottom: 1px solid var(--border-color) !important;
-            padding: 16px 0 !important;
-        }
-        .page-header h2 {
-            color: var(--text-primary);
-            font-weight: 700;
-            font-size: 20px;
-            margin: 0;
-        }
-        .card {
-            border: 1px solid var(--border-color) !important;
-            border-radius: 12px !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
-        }
-        .card-header {
-            background: transparent !important;
-            border-bottom: 1px solid var(--border-color) !important;
-        }
-        .btn-primary {
-            background: var(--primary) !important;
-            border-color: var(--primary) !important;
-            border-radius: 8px !important;
-        }
-        .btn-primary:hover {
-            background: var(--primary-dark) !important;
-            border-color: var(--primary-dark) !important;
-        }
-        .table {
-            color: var(--text-primary);
-        }
-        .table thead th {
-            background: #f1f5f9 !important;
-            border-bottom: 2px solid var(--border-color) !important;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-        }
-        .form-control {
-            border-radius: 8px !important;
-            border-color: var(--border-color) !important;
-        }
-        .form-control:focus {
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
         }
         .descarga { color: black; padding: 5px; }
         .header .logo { height: 100%; margin-top: 5px; }
@@ -131,15 +73,10 @@
         .el-checkbox__label { font-size: 13px; }
         .center-el-checkbox { display: flex; align-items: center; }
         .center-el-checkbox .el-checkbox { margin-bottom: 0 }
-        a:hover { color: var(--primary); }
-        a:visited { color: #585858; }
-        a:link { color: var(--primary); }
-
         .header {
             background: #ffffff !important;
-            border-bottom: 1px solid var(--border-color) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
         }
-
         .name-initials {
             background: var(--primary);
             color: white;
@@ -153,11 +90,21 @@
             font-size: 13px;
         }
 
+        @guest
+        .guest-brand {
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            color: #3b82f6;
+            cursor: default;
+        }
+
         @media only screen and (min-width: 768px) {
             html.fixed .inner-wrapper { padding-top: 60px !important; }
             html.fixed .content-body { margin-left: 0 !important; }
             html.fixed .page-header { left: 0 !important; }
         }
+        @endguest
     </style>
 
 </head>
