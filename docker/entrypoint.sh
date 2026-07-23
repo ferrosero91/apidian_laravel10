@@ -17,16 +17,14 @@ composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
     echo "==> Generando APP_KEY"
     php artisan key:generate --force
-    # Verificar que se genero
-    if grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
-        echo "    APP_KEY generada correctamente"
-    else
-        echo "    ERROR: APP_KEY no se pudo generar, intentando manualmente"
+    if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
+        echo "    Fallback: generando key manualmente"
         KEY=$(php -r "echo 'base64:'.base64_encode(random_bytes(32));")
-        sed -i "s|^APP_KEY=.*|APP_KEY=$KEY|" .env 2>/dev/null || \
-        sed -i.bak "s|^APP_KEY=.*|APP_KEY=$KEY|" .env
-        echo "    APP_KEY insertada manualmente"
+        sed -i.bak "s|^APP_KEY=.*|APP_KEY=$KEY|" .env 2>/dev/null || \
+        echo "APP_KEY=$KEY" >> .env
+        rm -f .env.bak
     fi
+    echo "    APP_KEY: $(grep '^APP_KEY=' .env | head -c 30)..."
 fi
 
 # 4. Descomprimir storage.zip si no existe el esqueleto
@@ -38,8 +36,6 @@ if [ ! -d "storage/app/public" ]; then
     elif [ -f "storage.zip" ]; then
         echo "==> Descomprimiendo storage.zip"
         unzip -o storage.zip -d .
-    else
-        echo "==> ADVERTENCIA: storage.zip no encontrado, saltando"
     fi
 fi
 
@@ -52,31 +48,24 @@ chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 echo "==> Creando storage:link"
 php artisan storage:link --force 2>/dev/null || true
 
-# 7. Ejecutar urn_on (namespace URN para firma XML)
+# 7. Ejecutar urn_on
 if [ -f "urn_on.sh" ]; then
     echo "==> Ejecutando urn_on.sh"
-    chmod +x urn_on.sh
-    ./urn_on.sh
+    chmod +x urn_on.sh && ./urn_on.sh
 fi
 
-# 8. Esperar a que MariaDB este lista
-echo "==> Esperando conexion a MariaDB..."
+# 8. Esperar MariaDB
+echo "==> Esperando MariaDB..."
 MAX_RETRIES=30
 RETRY_COUNT=0
 until php -r "
     try {
         new PDO('mysql:host=' . getenv('DB_HOST') . ';port=' . getenv('DB_PORT'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
         echo 'connected';
-    } catch (Exception \$e) {
-        exit(1);
-    }
+    } catch (Exception \$e) { exit(1); }
 " 2>/dev/null; do
     RETRY_COUNT=$((RETRY_COUNT + 1))
-    if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-        echo "==> ERROR: MariaDB no disponible despues de $MAX_RETRIES intentos"
-        exit 1
-    fi
-    echo "    Intento $RETRY_COUNT/$MAX_RETRIES - esperando 3s..."
+    [ $RETRY_COUNT -ge $MAX_RETRIES ] && echo "==> ERROR: MariaDB no disponible" && exit 1
     sleep 3
 done
 echo "==> MariaDB conectada"
@@ -89,17 +78,15 @@ php artisan migrate --force
 echo "==> Verificando seeders"
 php artisan db:seed --force 2>/dev/null || true
 
-# 11. Limpiar toda la cache
+# 11. Limpiar cache (NO regeneramos config:cache para evitar problemas con APP_KEY)
 echo "==> Limpiando cache"
 php artisan cache:clear 2>/dev/null || true
 php artisan config:clear 2>/dev/null || true
 php artisan route:clear 2>/dev/null || true
 php artisan view:clear 2>/dev/null || true
 
-# 12. Re-generar cache
-echo "==> Generando cache"
-php artisan config:cache
-php artisan route:cache 2>/dev/null || echo "    route:cache omitido (rutas duplicadas)"
+# 12. Cache de vistas (NO config cache)
+echo "==> Cache de vistas"
 php artisan view:cache 2>/dev/null || true
 
 echo "==> APIDIAN listo. Iniciando servicios..."
