@@ -13,10 +13,20 @@ fi
 echo "==> Ejecutando composer install"
 composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
-# 3. Generar APP_KEY si esta vacio
+# 3. Generar APP_KEY si no tiene formato base64
 if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
     echo "==> Generando APP_KEY"
     php artisan key:generate --force
+    # Verificar que se genero
+    if grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
+        echo "    APP_KEY generada correctamente"
+    else
+        echo "    ERROR: APP_KEY no se pudo generar, intentando manualmente"
+        KEY=$(php -r "echo 'base64:'.base64_encode(random_bytes(32));")
+        sed -i "s|^APP_KEY=.*|APP_KEY=$KEY|" .env 2>/dev/null || \
+        sed -i.bak "s|^APP_KEY=.*|APP_KEY=$KEY|" .env
+        echo "    APP_KEY insertada manualmente"
+    fi
 fi
 
 # 4. Descomprimir storage.zip si no existe el esqueleto
