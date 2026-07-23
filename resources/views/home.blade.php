@@ -8,7 +8,7 @@
     </div>
     <div class="right-wrapper text-end mt-auto pb-1">
         @if(auth()->user() && method_exists(auth()->user(), 'isPlatformAdmin') && auth()->user()->isPlatformAdmin())
-            <a href="{{ route('configuration_admin') }}" class="btn btn-nueva-empresa text-white mr-2">
+            <a href="{{ route('configuration_admin') }}" class="btn btn-primary btn-sm text-white mr-2">
                 <i class="fas fa-plus"></i>
                 Nueva empresa
             </a>
@@ -390,27 +390,83 @@
 <style>
 .btn-lg:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3) !important;
+    box-shadow: 0 6px 20px rgba(61, 220, 132, 0.4) !important;
 }
-.text-danger { color: #dc3545 !important; }
-.form-group { margin-bottom: 1rem; }
-.invalid-feedback { display: none; width: 100%; margin-top: 0.25rem; font-size: 0.875em; color: #dc3545; }
-.form-control.is-invalid { border-color: #dc3545; }
-.form-control.is-invalid:focus { border-color: #dc3545; box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); }
-.is-invalid .invalid-feedback { display: block; }
-.custom-file-label::after { content: "Buscar"; }
-.btn-nueva-empresa {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: none; border-radius: 6px; padding: 8px 16px;
-    font-weight: 600; font-size: 13px; color: white; transition: all 0.2s;
+
+.text-danger {
+    color: #dc3545 !important;
 }
-.btn-nueva-empresa:hover {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); color: white;
+
+.form-group {
+    margin-bottom: 1rem;
 }
-.el-dropdown-menu__item a { text-decoration: none; color: #606266; display: flex; align-items: center; width: 100%; }
-.el-dropdown-menu__item a:hover { color: #3b82f6; }
-.el-dropdown-menu__item a i { margin-right: 8px; }
+
+.invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.is-invalid .invalid-feedback {
+    display: block;
+}
+
+.nav-tabs .nav-link {
+    color: #495057;
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #e9ecef #e9ecef #dee2e6;
+}
+
+.nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.tab-content {
+    border: 1px solid #dee2e6;
+    border-top: none;
+    padding: 1rem;
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+
+.custom-file-label::after {
+    content: "Buscar";
+}
+
+/* Estilos para el dropdown de Element UI */
+.el-dropdown-menu__item a {
+    text-decoration: none;
+    color: #606266;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.el-dropdown-menu__item a:hover {
+    color: #409EFF;
+}
+
+.el-dropdown-menu__item a i {
+    margin-right: 8px;
+}
 </style>
 
 @endsection

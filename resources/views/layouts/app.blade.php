@@ -63,31 +63,47 @@
     <script src="{{ asset('porto-light/vendor/modernizr/modernizr.js') }}"></script>
 
     <style>
-        :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
+        .descarga {
+            color:black;
+            padding:5px;
         }
-        .descarga { color: black; padding: 5px; }
-        .header .logo { height: 100%; margin-top: 5px; }
-        .header .logo img { height: 45px; }
-        .el-checkbox__label { font-size: 13px; }
-        .center-el-checkbox { display: flex; align-items: center; }
-        .center-el-checkbox .el-checkbox { margin-bottom: 0 }
-        .header {
-            background: #ffffff !important;
-            border-bottom: 1px solid #e2e8f0 !important;
+        .header .logo {
+            height: 100%;
+            margin-top: 5px;
         }
-        .name-initials {
-            background: var(--primary);
-            color: white;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
+
+        .header .logo img {
+            height: 45px;
+        }
+
+        html.sidebar-light:not(.dark) ul.nav-main > li.nav-active > a {
+            color: #0088CC;
+        }
+
+        ul.nav-main > li.nav-active > a {
+            box-shadow: 2px 0 0 #0088CC inset;
+        }
+        .el-checkbox__label {
+            font-size: 13px;
+        }
+        .center-el-checkbox {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 13px;
+        }
+        .center-el-checkbox .el-checkbox {
+            margin-bottom: 0
+        }
+
+        a:hover {
+            color: #000000;
+        }
+
+        a:visited {
+            color: #585858;
+        }
+
+        a:link {
+            color: #2E64FE;
         }
 
         @guest
@@ -95,14 +111,22 @@
             width: 100%;
             text-align: center;
             font-weight: 700;
-            color: #3b82f6;
+            color: #0088CC;
             cursor: default;
         }
 
         @media only screen and (min-width: 768px) {
-            html.fixed .inner-wrapper { padding-top: 60px !important; }
-            html.fixed .content-body { margin-left: 0 !important; }
-            html.fixed .page-header { left: 0 !important; }
+            html.fixed .inner-wrapper {
+                padding-top: 60px !important;
+            }
+
+            html.fixed .content-body {
+                margin-left: 0 !important;
+            }
+
+            html.fixed .page-header {
+                left: 0 !important;
+            }
         }
         @endguest
     </style>
