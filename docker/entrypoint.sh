@@ -9,7 +9,7 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-# 2. Instalar dependencias PHP (DEBE ir antes de cualquier artisan)
+# 2. Instalar dependencias PHP
 echo "==> Ejecutando composer install"
 composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
@@ -20,12 +20,17 @@ if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
     if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
         echo "    Fallback: generando key manualmente"
         KEY=$(php -r "echo 'base64:'.base64_encode(random_bytes(32));")
-        sed -i.bak "s|^APP_KEY=.*|APP_KEY=$KEY|" .env 2>/dev/null || \
-        echo "APP_KEY=$KEY" >> .env
+        sed -i.bak "s|^APP_KEY=.*|APP_KEY=$KEY|" .env 2>/dev/null || echo "APP_KEY=$KEY" >> .env
         rm -f .env.bak
     fi
-    echo "    APP_KEY: $(grep '^APP_KEY=' .env | head -c 30)..."
 fi
+
+# Extraer la key del .env y EXPORTARLA como variable de entorno
+# Esto es critico: Dokploy inyecta APP_KEY=vacio como env var del contenedor,
+# y Laravel lee las env vars del sistema ANTES del .env file.
+# Al exportarla, sobreescribimos el valor vacio de Dokploy.
+export APP_KEY=$(grep '^APP_KEY=' .env | sed 's/^APP_KEY=//')
+echo "==> APP_KEY exportada: ${APP_KEY:0:30}..."
 
 # 4. Descomprimir storage.zip si no existe el esqueleto
 if [ ! -d "storage/app/public" ]; then
@@ -78,20 +83,20 @@ php artisan migrate --force
 echo "==> Verificando seeders"
 php artisan db:seed --force 2>/dev/null || true
 
-# 11. Limpiar cache (NO regeneramos config:cache para evitar problemas con APP_KEY)
+# 11. Limpiar cache
 echo "==> Limpiando cache"
 php artisan cache:clear 2>/dev/null || true
 php artisan config:clear 2>/dev/null || true
 php artisan route:clear 2>/dev/null || true
 php artisan view:clear 2>/dev/null || true
 
-# 12. Cache de vistas (NO config cache)
+# 12. Cache de vistas
 echo "==> Cache de vistas"
 php artisan view:cache 2>/dev/null || true
 
 echo "==> APIDIAN listo. Iniciando servicios..."
 
-# 13. Iniciar PHP-FPM en background
+# 13. Iniciar PHP-FPM (hereda las env vars exportadas, incluyendo APP_KEY)
 php-fpm -D
 
 # 14. Iniciar Nginx en foreground
