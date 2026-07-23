@@ -84,10 +84,10 @@ php artisan db:seed --force 2>/dev/null || true
 # 11. Cache
 echo "==> Generando cache de configuracion"
 php artisan config:cache
-php artisan route:cache 2>/dev/null || php artisan route:cache
+php artisan route:cache 2>/dev/null || echo "    route:cache omitido (rutas duplicadas)"
 php artisan view:cache 2>/dev/null || true
 
-# 12. Limpiar y re-cachear
+# 12. Limpiar y re-cachear config
 php artisan cache:clear 2>/dev/null || true
 php artisan config:cache
 
