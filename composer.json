@@ -65,6 +65,11 @@
         "sort-packages": true,
         "allow-plugins": {
             "composer/package-versions-deprecated": true
+        },
+        "policy": {
+            "advisories": {
+                "block": false
+            }
         }
     },
     "extra": {
