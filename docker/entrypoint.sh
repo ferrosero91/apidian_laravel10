@@ -9,16 +9,15 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-# 2. Generar APP_KEY SIEMPRE antes de todo (necesario para artisan)
-echo "==> Verificando APP_KEY"
+# 2. Instalar dependencias PHP (DEBE ir antes de cualquier artisan)
+echo "==> Ejecutando composer install"
+composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+# 3. Generar APP_KEY si esta vacio
 if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
     echo "==> Generando APP_KEY"
     php artisan key:generate --force
 fi
-
-# 3. Instalar dependencias PHP
-echo "==> Ejecutando composer install"
-composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
 # 4. Descomprimir storage.zip si no existe el esqueleto
 if [ ! -d "storage/app/public" ]; then
@@ -80,14 +79,14 @@ php artisan migrate --force
 echo "==> Verificando seeders"
 php artisan db:seed --force 2>/dev/null || true
 
-# 11. Limpiar toda la cache primero
+# 11. Limpiar toda la cache
 echo "==> Limpiando cache"
 php artisan cache:clear 2>/dev/null || true
 php artisan config:clear 2>/dev/null || true
 php artisan route:clear 2>/dev/null || true
 php artisan view:clear 2>/dev/null || true
 
-# 12. Re-generar cache (orden correcto: config primero)
+# 12. Re-generar cache
 echo "==> Generando cache"
 php artisan config:cache
 php artisan route:cache 2>/dev/null || echo "    route:cache omitido (rutas duplicadas)"
