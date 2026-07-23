@@ -71,6 +71,9 @@ Route::group(['middleware' => ['auth', 'company.web.access']], function() {
     Route::get('/taxes', 'HomeController@listTaxes')->name('listtaxes');
     Route::get('/listconfigurations', 'HomeController@listConfigurations')->name('listconfigurations');
     Route::put('/companies/{company}', 'HomeController@update')->name('companies.update');
+    Route::put('/companies/{company}/toggle-state', 'HomeController@toggleState')->name('companies.toggle-state');
+    Route::delete('/companies/{company}', 'HomeController@destroy')->name('companies.destroy');
+    Route::put('/companies/{company}/environment', 'HomeController@changeEnvironment')->name('companies.environment');
 
     // emails
     Route::get('companies/{company}/configuration/email', 'CompanyUserController@emailIndex')->name('company.email.index');

@@ -206,4 +206,96 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
+    public function toggleState($companyId)
+    {
+        try {
+            $company = Company::findOrFail($companyId);
+
+            /** @var User|null $user */
+            $user = auth()->user();
+            if ($user && !$user->isPlatformAdmin()) {
+                abort(403, 'No tienes permiso para realizar esta acción.');
+            }
+
+            $company->update([
+                'state' => !$company->state
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => $company->state ? 'Empresa habilitada.' : 'Empresa deshabilitada.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cambiar estado: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($companyId)
+    {
+        try {
+            $company = Company::findOrFail($companyId);
+
+            /** @var User|null $user */
+            $user = auth()->user();
+            if ($user && !$user->isPlatformAdmin()) {
+                abort(403, 'No tienes permiso para eliminar empresas.');
+            }
+
+            // Eliminar documentos relacionados
+            Document::where('identification_number', $company->identification_number)->delete();
+
+            // Eliminar empresa
+            $company->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empresa eliminada exitosamente.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar empresa: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function changeEnvironment(Request $request, $companyId)
+    {
+        try {
+            $request->validate([
+                'type_environment_id' => 'required|in:1,2',
+            ]);
+
+            $company = Company::findOrFail($companyId);
+
+            /** @var User|null $user */
+            $user = auth()->user();
+            if ($user && !$user->isPlatformAdmin()) {
+                abort(403, 'No tienes permiso para realizar esta acción.');
+            }
+
+            $company->update([
+                'type_environment_id' => $request->type_environment_id
+            ]);
+
+            $envName = $request->type_environment_id == 1 ? 'Producción' : 'Habilitación';
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ambiente cambiado a ' . $envName . ' exitosamente.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cambiar ambiente: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
