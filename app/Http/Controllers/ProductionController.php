@@ -384,7 +384,7 @@ class ProductionController extends Controller
             $type = $request->input('type', 'invoice');
             // Nomina y Documentos equivalentes (POS) no disponibles en la version Community.
             if ($type === 'pos' || $type === 'payroll') {
-                return response()->json(['error' => 'Nomina y Documentos equivalentes no estan disponibles en la version Community.']);
+                return response()->json(['error' => 'Nomina y Documentos equivalentes no disponibles en esta version.']);
             }
             // \Log::info('Paso a producción iniciado', [
             //     'step' => $step,

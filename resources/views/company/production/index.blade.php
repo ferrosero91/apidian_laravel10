@@ -385,7 +385,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 aria-controls="payroll" aria-selected="false" disabled>
                 <img src="{{ asset('production/nomina-electronica-icon.svg') }}" alt="Nómina electrónica" class="tab-icon me-2">
                 Nómina electrónica
-                <span class="badge ms-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
             </button>
         </li>
         <li class="nav-item d-flex" role="presentation">
@@ -410,7 +409,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 aria-controls="pos" aria-selected="false" disabled>
                 <img src="{{ asset('production/documentos-equivalentes-icon.svg') }}" alt="Documentos equivalentes" class="tab-icon me-2">
                 Documentos equivalentes
-                <span class="badge ms-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
             </button>
         </li>
     </ul>

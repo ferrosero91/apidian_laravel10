@@ -65,7 +65,7 @@ class StateController extends Controller
         if($request->is_payroll || $request->is_eqdoc)
             return [
                 'success' => false,
-                'message' => "Nomina y Documentos Equivalentes no estan disponibles en la version Community."
+                'message' => "Nomina y Documentos Equivalentes no disponibles en esta version."
             ];
 
         $getStatusZip = new GetStatusZip($user->company->certificate->path, $user->company->certificate->password, $user->company->software->url);
@@ -469,7 +469,7 @@ class StateController extends Controller
         if($request->is_payroll || $request->is_eqdoc)
             return [
                 'success' => false,
-                'message' => "Nomina y Documentos Equivalentes no estan disponibles en la version Community."
+                'message' => "Nomina y Documentos Equivalentes no disponibles en esta version."
             ];
 
         $getStatus = new GetStatus($user->company->certificate->path, $user->company->certificate->password, $user->company->software->url);

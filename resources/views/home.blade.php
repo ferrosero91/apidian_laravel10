@@ -8,14 +8,14 @@
     </div>
     <div class="right-wrapper text-end mt-auto pb-1">
         @if(auth()->user() && method_exists(auth()->user(), 'isPlatformAdmin') && auth()->user()->isPlatformAdmin())
-            <a href="{{ route('configuration_admin') }}" class="btn btn-primary btn-sm text-white mr-2">
+            <a href="{{ route('configuration_admin') }}" class="btn btn-nueva-empresa text-white mr-2">
                 <i class="fas fa-plus"></i>
                 Nueva empresa
             </a>
         @endif
     </div>
 </header>
-<div class="card mb-3">
+<div class="card search-card mb-3">
     <div class="card-body">
         <div class="row align-items-end">
             <!-- Filtro primero -->
@@ -117,7 +117,6 @@
                                                 </svg>
                                             </span>
                                             <span class="ml-2">Usuarios</span>
-                                            <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                     <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.email.index', $row->id) }}')">
                                             <span class="dropdown-icon-left">
@@ -145,7 +144,6 @@
                                             </svg>
                                         </span>
                                         <span class="ml-2">Acceso a la App</span>
-                                        <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                     <el-dropdown-item divided></el-dropdown-item>
                                     <el-dropdown-item class="d-flex align-items-center">
@@ -162,7 +160,6 @@
                                             </svg>
                                         </span>
                                         <span class="ml-2">Almacenamiento S3</span>
-                                        <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -393,83 +390,77 @@
 <style>
 .btn-lg:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(61, 220, 132, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3) !important;
 }
 
-.text-danger {
-    color: #dc3545 !important;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
+.text-danger { color: #dc3545 !important; }
+.form-group { margin-bottom: 1rem; }
 
 .invalid-feedback {
-    display: none;
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 0.875em;
-    color: #dc3545;
+    display: none; width: 100%; margin-top: 0.25rem;
+    font-size: 0.875em; color: #dc3545;
 }
-
-.form-control.is-invalid {
-    border-color: #dc3545;
-}
-
-.form-control.is-invalid:focus {
-    border-color: #dc3545;
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-}
-
-.is-invalid .invalid-feedback {
-    display: block;
-}
+.form-control.is-invalid { border-color: #dc3545; }
+.form-control.is-invalid:focus { border-color: #dc3545; box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); }
+.is-invalid .invalid-feedback { display: block; }
 
 .nav-tabs .nav-link {
-    color: #495057;
-    border: 1px solid transparent;
-    border-top-left-radius: .25rem;
-    border-top-right-radius: .25rem;
+    color: #64748b; border: 1px solid transparent;
+    border-radius: 8px 8px 0 0; font-weight: 500; font-size: 13px;
 }
-
-.nav-tabs .nav-link:hover {
-    border-color: #e9ecef #e9ecef #dee2e6;
-}
-
+.nav-tabs .nav-link:hover { border-color: #e2e8f0 #e2e8f0 #dee2e6; color: #0f172a; }
 .nav-tabs .nav-link.active {
-    color: #495057;
-    background-color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
+    color: #0f172a; background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff; font-weight: 600;
 }
-
 .tab-content {
-    border: 1px solid #dee2e6;
-    border-top: none;
-    padding: 1rem;
-    border-bottom-left-radius: .25rem;
-    border-bottom-right-radius: .25rem;
+    border: 1px solid #dee2e6; border-top: none;
+    padding: 1.25rem; border-radius: 0 0 12px 12px;
+}
+.custom-file-label::after { content: "Buscar"; }
+
+.table { border-collapse: separate; border-spacing: 0; }
+.table thead th {
+    background: #f8fafc; border-bottom: 2px solid #e2e8f0;
+    font-weight: 600; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; color: #64748b; padding: 12px 16px;
+}
+.table tbody td {
+    padding: 12px 16px; vertical-align: middle; border-bottom: 1px solid #f1f5f9;
+}
+.table tbody tr:hover { background: #f8fafc; }
+.table tbody tr:last-child td { border-bottom: none; }
+
+.search-card {
+    border: 1px solid #e2e8f0; border-radius: 12px;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.search-card .form-control {
+    border-radius: 8px; border-color: #e2e8f0;
+    padding: 10px 14px; font-size: 14px;
+}
+.search-card .form-control:focus {
+    border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.search-card select.form-control {
+    border-radius: 8px; border-color: #e2e8f0;
+    padding: 10px 14px; font-size: 14px;
+}
+.btn-nueva-empresa {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border: none; border-radius: 8px; padding: 8px 16px;
+    font-weight: 600; font-size: 13px; color: white;
+    transition: all 0.2s;
+}
+.btn-nueva-empresa:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    color: white;
 }
 
-.custom-file-label::after {
-    content: "Buscar";
-}
-
-/* Estilos para el dropdown de Element UI */
-.el-dropdown-menu__item a {
-    text-decoration: none;
-    color: #606266;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-.el-dropdown-menu__item a:hover {
-    color: #409EFF;
-}
-
-.el-dropdown-menu__item a i {
-    margin-right: 8px;
-}
+.el-dropdown-menu__item a { text-decoration: none; color: #606266; display: flex; align-items: center; width: 100%; }
+.el-dropdown-menu__item a:hover { color: #3b82f6; }
+.el-dropdown-menu__item a i { margin-right: 8px; }
 </style>
 
 @endsection

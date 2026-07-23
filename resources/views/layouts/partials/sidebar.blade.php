@@ -7,16 +7,92 @@ $comp_id = $path[1];
 $cust_id = $path[2];
 @endphp
 
-<aside id="sidebar-left" class="sidebar-left">
+<style>
+    .sidebar-custom {
+        background: #0f172a !important;
+        border-right: 1px solid #1e293b !important;
+    }
+    .sidebar-custom .sidebar-header {
+        padding: 20px 16px !important;
+        border-bottom: 1px solid #1e293b !important;
+    }
+    .sidebar-custom .sidebar-brand-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .sidebar-custom .sidebar-brand-icon svg {
+        width: 18px;
+        height: 18px;
+        color: white;
+    }
+    .sidebar-custom .sidebar-title-text {
+        color: #f1f5f9 !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        letter-spacing: -0.3px;
+    }
+    .sidebar-custom .sidebar-title-text-second {
+        color: #64748b !important;
+        font-size: 11px !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .sidebar-custom .nav-main > li > a {
+        color: #94a3b8 !important;
+        padding: 10px 16px !important;
+        margin: 2px 8px !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        transition: all 0.15s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    .sidebar-custom .nav-main > li > a:hover {
+        color: #e2e8f0 !important;
+        background: rgba(59, 130, 246, 0.08) !important;
+    }
+    .sidebar-custom .nav-main > li > a svg,
+    .sidebar-custom .nav-main > li > a i {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 16px !important;
+        opacity: 0.7;
+    }
+    .sidebar-custom .nav-main > li.nav-active > a {
+        color: #f1f5f9 !important;
+        background: rgba(59, 130, 246, 0.12) !important;
+        box-shadow: 3px 0 0 #3b82f6 inset !important;
+    }
+    .sidebar-custom .nav-main > li.nav-active > a svg,
+    .sidebar-custom .nav-main > li.nav-active > a i {
+        opacity: 1 !important;
+        color: #3b82f6 !important;
+    }
+</style>
+
+<aside id="sidebar-left" class="sidebar-left sidebar-custom">
     <div class="sidebar-header">
-        <a href="{{route('home')}}" class="sidebar-title p-0 nav-link d-flex align-items-center">
-            <div class="icon-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-letter-a-small"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 16v-6a2 2 0 1 1 4 0v6" /><path d="M10 13h4" /></svg>
-            </div>            
-            <span class="sidebar-title-text-container">
-                <span class="sidebar-title-text">Apidian Community Edition</span>
+        <a href="{{route('home')}}" class="sidebar-title p-0 nav-link d-flex align-items-center" style="text-decoration:none;">
+            <div class="sidebar-brand-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 3v4a1 1 0 0 0 1 1h4"/>
+                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/>
+                    <path d="M9 17h6"/>
+                    <path d="M9 13h6"/>
+                </svg>
+            </div>
+            <span class="sidebar-title-text-container" style="margin-left: 10px;">
+                <span class="sidebar-title-text">APIDIAN</span>
                 <br>
-                <span class="text-muted sidebar-title-text-second">Menu</span>
+                <span class="text-muted sidebar-title-text-second">Panel de Control</span>
             </span>
         </a>
         <div class="sidebar-toggle d-none d-md-block" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle" style="display: none !important">
@@ -31,14 +107,14 @@ $cust_id = $path[2];
 
                     <li class="{{ ($path[0] === 'home')?'nav-active':'' }}">
                         <a class="nav-link" href="{{route('home')}}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-factory-2 mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21h18" /><path d="M5 21v-12l5 4v-4l5 4h4" /><path d="M19 21v-8l-1.436 -9.574a.5 .5 0 0 0 -.495 -.426h-1.145a.5 .5 0 0 0 -.494 .418l-1.43 8.582" /><path d="M9 17h1" /><path d="M14 17h1" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18" /><path d="M5 21v-12l5 4v-4l5 4h4" /><path d="M19 21v-8l-1.436 -9.574a.5 .5 0 0 0 -.495 -.426h-1.145a.5 .5 0 0 0 -.494 .418l-1.43 8.582" /><path d="M9 17h1" /><path d="M14 17h1" /></svg>
                             <span>Empresas</span>
                         </a>
                     </li>
 
                     <li class="{{ ($path[0] === 'tools')?'nav-active':'' }}">
                         <a class="nav-link" href="{{route('tools')}}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-book mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
                             <span>Documentación</span>
                         </a>
                     </li>
@@ -47,13 +123,13 @@ $cust_id = $path[2];
                     @if(Request::is('company*'))
                         <li class="{{ Route::is('company') ? 'nav-active' : '' }}">
                             <a class="nav-link" href="{{route('company', request()->segment(2))}}">
-                                <i class="fas fa-list-alt" aria-hidden="true"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /></svg>
                                 <span>Listado de documentos</span>
                             </a>
                         </li>
                         <li class="{{ Route::is('company.events') ? 'nav-active' : '' }}">
                             <a class="nav-link" href="{{route('company.events', request()->segment(2))}}">
-                                <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" /><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M17 10h2a2 2 0 0 1 2 2v1" /><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M3 13v-1a2 2 0 0 1 2 -2h2" /></svg>
                                 <span>Eventos RADIAN</span>
                             </a>
                         </li>
@@ -61,72 +137,15 @@ $cust_id = $path[2];
                     @if(!Request::is('company*'))
                     <li class="">
                         <a href="{{route('logs')}}" class="nav-link" target="BLANK">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-bug mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 9v-1a3 3 0 0 1 6 0v1" /><path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" /><path d="M3 13l4 0" /><path d="M17 13l4 0" /><path d="M12 20l0 -6" /><path d="M4 19l3.35 -2" /><path d="M20 19l-3.35 -2" /><path d="M4 7l3.75 2.4" /><path d="M20 7l-3.75 2.4" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9v-1a3 3 0 0 1 6 0v1" /><path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" /><path d="M3 13l4 0" /><path d="M17 13l4 0" /><path d="M12 20l0 -6" /><path d="M4 19l3.35 -2" /><path d="M20 19l-3.35 -2" /><path d="M4 7l3.75 2.4" /><path d="M20 7l-3.75 2.4" /></svg>
                             <span>Logs</span>
                         </a>
                     </li>
                     @endif
-
-
-                    {{-- @if(isset(Auth::user()->email))
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'' }}">
-                            <a class="nav-link" href="{{route('documents_index')}}">
-                                <i class="fas fa-receipt" aria-hidden="true"></i>
-                                <span>Documentos</span>
-                            </a>
-                        </li>
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'' }}">
-                                <a class="nav-link" href="{{route('tax_index')}}">
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Impuestos</span>
-                                </a>
-                            </li>
-                        <li class="nav-parent {{ in_array($path[0], ['items_ecommerce', 'tags', 'promotions'])?'nav-active nav-expanded':'' }}">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-receipt" aria-hidden="true"></i>
-                                <span>Empresa</span>
-                            </a>
-                            <ul class="nav nav-children">
-                                <li class="{{ ($path[0] === 'items_ecommerce')?'nav-active':'' }}">
-                                    <a class="nav-link" href="{{route('configuration_index')}}">
-                                        Lista
-                                    </a>
-                                </li>
-                                <li class="{{ ($path[0] === 'tags')?'nav-active':'' }}">
-                                    <a class="nav-link" href="{{route('configuration_admin')}}">
-                                        Nuevo
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    @else
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'nav-active' }}">
-                            <form action="{{ url('/okcustomerlogin/'.$comp_id.'/'.$cust_id) }}" method="POST">
-                                @csrf
-                                <a class="nav-link" href="javascript:;" onclick="$('#action-button').click();">
-                                    <input type="hidden" name="verificar" value="FALSE"/>
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Documentos Recibidos</span>
-                                </a>
-                                <input type="submit" id="action-button" style="display: none;" >
-                            </form>
-                        </li>
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'nav-active' }}">
-                            <form action="{{ url('/customer-password/'.$comp_id.'/'.$cust_id) }}" method="GET">
-                                @csrf
-                                <a class="nav-link" href="javascript:;" onclick="$('#action-button2').click();">
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Cambiar Password Cliente</span>
-                                </a>
-                                <input type="submit" id="action-button2" style="display: none;" >
-                            </form>
-                        </li>
-                    @endif --}}
                 </ul>
             </nav>
         </div>
         <script>
-            // Maintain Scroll Position
             if (typeof localStorage !== 'undefined') {
                 if (localStorage.getItem('sidebar-left-position') !== null) {
                     var initialPosition = localStorage.getItem('sidebar-left-position'),
