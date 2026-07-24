@@ -1388,6 +1388,7 @@ class ConfigurationController extends Controller
     public function getTemplates()
     {
         $templatePath = resource_path('views/pdfs/invoice/');
+        $imagePath = public_path('pdf/');
         $imageBaseUrl = asset('pdf/');
 
         // Buscar archivos que coincidan con 'templateX.blade.php'
@@ -1396,16 +1397,17 @@ class ConfigurationController extends Controller
 
         foreach ($files as $file) {
             if (preg_match('/template(\d+)\.blade\.php$/', $file->getFilename(), $matches)) {
-                $templateNumber = $matches[1]; // Obtener solo el número
+                $templateNumber = $matches[1];
+                $imageName = "template{$templateNumber}.png";
 
-                // Generar la URL de la imagen
-                $imageUrl = $imageBaseUrl . "/template{$templateNumber}.png";
-
-                $templates[] = [
-                    'id' => $templateNumber,
-                    'name' => $file->getFilename(),
-                    'image_url' => $imageUrl,
-                ];
+                // Solo incluir si existe la imagen
+                if (File::exists($imagePath . $imageName)) {
+                    $templates[] = [
+                        'id' => $templateNumber,
+                        'name' => $file->getFilename(),
+                        'image_url' => $imageBaseUrl . "/" . $imageName,
+                    ];
+                }
             }
         }
 
