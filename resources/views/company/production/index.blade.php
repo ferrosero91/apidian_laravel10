@@ -345,6 +345,95 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<script>
+// Load PDF templates
+document.addEventListener('DOMContentLoaded', function() {
+    var companyId = {{ $company->id }};
+    var apiToken = '{{ $company->user->api_token }}';
+    var currentTemplate = {{ $company->graphic_representation_template ?? 1 }};
+
+    function loadTemplates() {
+        var container = document.getElementById('template-gallery');
+        if (!container) return;
+
+        fetch('/api/ubl2.1/config/templates', {
+            headers: {
+                'Authorization': 'Bearer ' + apiToken,
+                'Accept': 'application/json'
+            }
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.templates) {
+                var html = '';
+                data.templates.forEach(function(template) {
+                    var isCurrent = template.id == currentTemplate;
+                    html += '<div class="col-md-3 col-sm-6 mb-4">';
+                    html += '  <div class="card ' + (isCurrent ? 'border-primary' : '') + '" style="cursor:pointer;" onclick="selectTemplate(' + template.id + ')">';
+                    html += '    <img src="' + template.image_url + '" class="card-img-top" alt="Plantilla ' + template.id + '" onerror="this.src=\'/img/no-preview.png\'">';
+                    html += '    <div class="card-body text-center p-2">';
+                    html += '      <h6 class="card-title mb-0">Plantilla ' + template.id + '</h6>';
+                    if (isCurrent) {
+                        html += '      <span class="badge badge-primary">Actual</span>';
+                    }
+                    html += '    </div>';
+                    html += '  </div>';
+                    html += '</div>';
+                });
+                container.innerHTML = html;
+            }
+        })
+        .catch(function(error) {
+            container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar plantillas</div></div>';
+        });
+    }
+
+    window.selectTemplate = function(templateId) {
+        fetch('/api/ubl2.1/config/template', {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + apiToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ id: templateId })
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                currentTemplate = templateId;
+                loadTemplates();
+                new PNotify({
+                    text: 'Plantilla actualizada correctamente',
+                    type: 'success',
+                    delay: 3000
+                });
+            } else {
+                new PNotify({
+                    text: data.error || 'Error al actualizar plantilla',
+                    type: 'error',
+                    delay: 3000
+                });
+            }
+        })
+        .catch(function() {
+            new PNotify({
+                text: 'Error de conexión',
+                type: 'error',
+                delay: 3000
+            });
+        });
+    };
+
+    // Load templates when the tab is shown
+    var templateTab = document.getElementById('invoice-template-tab');
+    if (templateTab) {
+        templateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates();
+        });
+    }
+});
+</script>
 @endpush
 
 @section('content')
@@ -452,6 +541,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         Resoluciones
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="invoice-template-tab" data-bs-toggle="tab" data-bs-target="#invoice-template" type="button" role="tab"
+                        aria-controls="invoice-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="invoiceSubTabsContent">
                 <div class="tab-pane fade show active" id="invoice-list" role="tabpanel" aria-labelledby="invoice-list-tab">
@@ -479,6 +576,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         'resolutionsProd' => $invoiceData['resolutionsProd'] ?? collect(),
                         'resolutionTypeDocuments' => $invoiceData['resolutionTypeDocuments'] ?? collect(),
                     ])
+                </div>
+                <div class="tab-pane fade" id="invoice-template" role="tabpanel" aria-labelledby="invoice-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Factura Electrónica para esta empresa.<br>Esta plantilla también se usa para las notas crédito y débito.</p>
+                        <div class="row" id="template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
