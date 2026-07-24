@@ -66,39 +66,6 @@ $cust_id = $path[2];
                         </a>
                     </li>
                     @endif
-
-                    @if(isset(Auth::user()->email))
-                        <li class="{{ ($path[0] === 'documents')?'nav-active':'' }}">
-                            <a class="nav-link" href="{{route('documents_index')}}">
-                                <i class="fas fa-receipt" aria-hidden="true"></i>
-                                <span>Documentos</span>
-                            </a>
-                        </li>
-                        <li class="{{ ($path[0] === 'tax')?'nav-active':'' }}">
-                            <a class="nav-link" href="{{route('tax_index')}}">
-                                <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
-                                <span>Impuestos</span>
-                            </a>
-                        </li>
-                        <li class="nav-parent {{ in_array($path[0], ['configuration', 'configuration_admin'])?'nav-active nav-expanded':'' }}">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-building" aria-hidden="true"></i>
-                                <span>Empresa</span>
-                            </a>
-                            <ul class="nav nav-children">
-                                <li class="{{ ($path[0] === 'configuration')?'nav-active':'' }}">
-                                    <a class="nav-link" href="{{route('configuration_index')}}">
-                                        Lista
-                                    </a>
-                                </li>
-                                <li class="{{ ($path[0] === 'configuration_admin')?'nav-active':'' }}">
-                                    <a class="nav-link" href="{{route('configuration_admin')}}">
-                                        Nuevo
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    @endif
                 </ul>
             </nav>
         </div>

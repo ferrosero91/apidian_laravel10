@@ -136,8 +136,9 @@ class HomeController extends Controller
 
     // replica de SellerLoginController@SellersRadianEventsView
     public function events($company_idnumber){
+        $company = Company::where('identification_number', $company_idnumber)->firstOrFail();
         $documents = ReceivedDocument::where('customer','=',$company_idnumber)->where('state_document_id', '=', 1)->paginate(10);
-        return view('company.events', compact('documents', 'company_idnumber'));
+        return view('company.events', compact('documents', 'company_idnumber', 'company'));
     }
 
     public function update(Request $request, $companyId)
