@@ -101,7 +101,7 @@
                                             </span>
                                             <span class="ml-2">Documentos Electrónicos</span>
                                     </el-dropdown-item >
-                                    <el-dropdown-item class="d-flex align-items-center">
+                                    <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.users.index', $row->id) }}')">
                                             <span class="dropdown-icon-left">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -131,7 +131,7 @@
                                             </span>
                                             <span class="ml-2">Configurar Correo</span>
                                     </el-dropdown-item>
-                                    <el-dropdown-item class="d-flex align-items-center">
+                                    <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.app-access.index', $row->id) }}')">
                                         <span class="dropdown-icon-left">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -146,7 +146,7 @@
                                         <span class="ml-2">Acceso a la App</span>
                                     </el-dropdown-item>
                                     <el-dropdown-item divided></el-dropdown-item>
-                                    <el-dropdown-item class="d-flex align-items-center">
+                                    <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.storage.index', $row->id) }}')">
                                         <span class="dropdown-icon-left">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"

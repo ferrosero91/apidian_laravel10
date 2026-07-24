@@ -82,6 +82,22 @@ Route::group(['middleware' => ['auth', 'company.web.access']], function() {
     Route::get('companies/{company}/configuration/email', 'CompanyUserController@emailIndex')->name('company.email.index');
     Route::post('companies/{company}/configuration/email', 'CompanyUserController@emailStore')->name('company.email.store');
 
+    // users management
+    Route::get('companies/{company}/users', 'CompanyUserController@usersIndex')->name('company.users.index');
+    Route::post('companies/{company}/users', 'CompanyUserController@usersStore')->name('company.users.store');
+    Route::delete('companies/{company}/users/{user}', 'CompanyUserController@usersDestroy')->name('company.users.destroy');
+
+    // app access
+    Route::get('companies/{company}/app-access', 'CompanyUserController@appAccessIndex')->name('company.app-access.index');
+    Route::post('companies/{company}/app-access', 'CompanyUserController@appAccessStore')->name('company.app-access.store');
+    Route::post('companies/{company}/app-access/generate-token', 'CompanyUserController@appAccessGenerateToken')->name('company.app-access.generate-token');
+    Route::delete('companies/{company}/app-access/devices/{device}', 'CompanyUserController@appAccessRemoveDevice')->name('company.app-access.remove-device');
+
+    // storage S3
+    Route::get('companies/{company}/storage', 'CompanyUserController@storageIndex')->name('company.storage.index');
+    Route::post('companies/{company}/storage', 'CompanyUserController@storageStore')->name('company.storage.store');
+    Route::post('companies/{company}/storage/test', 'CompanyUserController@storageTest')->name('company.storage.test');
+
     // resoluciones
     Route::get('companies/{company}/configuration/resolutions', 'ResolutionController@index')->name('company.resolutions.index');
     Route::post('companies/{company}/configuration/resolutions', 'ResolutionController@store')->name('company.resolutions.store');
