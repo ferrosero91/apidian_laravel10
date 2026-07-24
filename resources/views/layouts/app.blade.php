@@ -56,6 +56,7 @@
         <link rel="stylesheet" href="{{ asset('theme/custom_styles.css') }}" />
     @endif
 
+    <link rel="stylesheet" href="{{ asset('css/custom-element-ui.css') }}" />
 
     @stack('styles')
 

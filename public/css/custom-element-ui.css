@@ -1,0 +1,144 @@
+/* ==========================================================================
+   Custom Element UI Styles - Override porto-light & Bootstrap conflicts
+   ========================================================================== */
+
+/* ---- el-table container ---- */
+.el-table {
+  width: 100% !important;
+  font-size: 13px;
+  color: #333 !important;
+  background-color: #fff !important;
+  border: 1px solid #ebeef5 !important;
+  border-radius: 4px;
+}
+
+/* ---- Header cells ---- */
+.el-table th.el-table__cell {
+  background-color: #f5f7fa !important;
+  color: #606266 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  border-bottom: 2px solid #ebeef5 !important;
+  padding: 10px 0 !important;
+  text-align: left !important;
+}
+
+/* ---- Body cells ---- */
+.el-table td.el-table__cell {
+  border-bottom: 1px solid #ebeef5 !important;
+  padding: 8px 0 !important;
+  color: #333 !important;
+  background-color: #fff !important;
+  font-size: 13px !important;
+}
+
+/* ---- Row hover ---- */
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell,
+.el-table__body tr.hover-row > td.el-table__cell {
+  background-color: #f5f7fa !important;
+}
+
+/* ---- Striped rows ---- */
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background-color: #fafafa !important;
+}
+
+/* ---- Fixed columns ---- */
+.el-table__fixed,
+.el-table__fixed-right {
+  box-shadow: none !important;
+}
+
+.el-table__fixed::before,
+.el-table__fixed-right::before {
+  background-color: #ebeef5 !important;
+}
+
+/* ---- Empty text ---- */
+.el-table__empty-text {
+  color: #909399 !important;
+  font-size: 14px !important;
+}
+
+/* ---- Buttons inside table ---- */
+.el-table .btn-xs {
+  padding: 3px 8px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  border-radius: 3px !important;
+}
+
+.el-table .btn-info {
+  color: #fff !important;
+  background-color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+}
+
+.el-table .btn-info:hover {
+  background-color: #138496 !important;
+  border-color: #117a8b !important;
+}
+
+.el-table .btn-info i {
+  color: #fff !important;
+}
+
+/* ---- Sort icons ---- */
+.el-table .sort-caret.ascending {
+  border-bottom-color: #606266 !important;
+}
+
+.el-table .sort-caret.descending {
+  border-top-color: #606266 !important;
+}
+
+.el-table .ascending .sort-caret.ascending {
+  border-bottom-color: #409eff !important;
+}
+
+.el-table .descending .sort-caret.descending {
+  border-top-color: #409eff !important;
+}
+
+/* ---- Table wrapper fix ---- */
+.el-table__body-wrapper {
+  overflow-x: auto !important;
+}
+
+.el-table__header-wrapper {
+  overflow: hidden !important;
+}
+
+/* ---- Card wrapper ---- */
+.el-table + .el-table {
+  margin-top: 10px !important;
+}
+
+/* ---- Fix for porto-light table overrides ---- */
+.el-table table {
+  border-collapse: collapse !important;
+  margin-bottom: 0 !important;
+}
+
+.el-table table th,
+.el-table table td {
+  padding: 0 !important;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .el-table {
+    font-size: 12px !important;
+  }
+
+  .el-table th.el-table__cell,
+  .el-table td.el-table__cell {
+    padding: 6px 0 !important;
+    font-size: 12px !important;
+  }
+
+  .el-table .btn-xs {
+    padding: 2px 5px !important;
+    font-size: 11px !important;
+  }
+}
