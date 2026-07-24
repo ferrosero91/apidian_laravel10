@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.selectTemplate = function(templateId) {
-        fetch('/api/ubl2.1/config/template', {
+        fetch('/api/ubl2.1/config/templates', {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + apiToken,
