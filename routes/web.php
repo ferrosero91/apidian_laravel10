@@ -65,6 +65,7 @@ Route::group(['middleware' => ['auth', 'company.web.access']], function() {
     Route::get('/tools', 'HomeController@tools')->name('tools');
 
     Route::get('/company/{company}', 'HomeController@company')->name('company');
+    Route::get('/company/{company}/edit', 'HomeController@edit')->name('company.edit');
     Route::get('/company/{company}/document/{cufe}', 'HomeController@getXml')->name('getXml');
     Route::get('/company/{company}/events', 'HomeController@events')->name('company.events');
     Route::get('/documents', 'HomeController@listDocuments')->name('listdocuments');

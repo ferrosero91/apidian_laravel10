@@ -84,6 +84,22 @@ class HomeController extends Controller
         return view('company.documents', ['company' => $company, 'documents' => $documents, 'resolution_credit_notes' => $resolution_credit_notes, 'token_company' => $token_company]);
     }
 
+    public function edit(Company $company)
+    {
+        /** @var User|null $user */
+        $user = auth()->user();
+        if ($user && !$user->isPlatformAdmin() && !$user->isCompanyOwner($company)) {
+            abort(403, 'No tienes acceso a esta empresa.');
+        }
+
+        $type_regimes = TypeRegime::all();
+        $type_liabilities = TypeLiability::all();
+        $municipalities = Municipality::all();
+        $type_document_identifications = TypeDocumentIdentification::all();
+
+        return view('company.edit', compact('company', 'type_regimes', 'type_liabilities', 'municipalities', 'type_document_identifications'));
+    }
+
     public function getXml(Company $company, $cufe)
     {
         /** @var User|null $user */
