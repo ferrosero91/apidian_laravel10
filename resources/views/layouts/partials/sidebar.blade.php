@@ -43,6 +43,27 @@ $cust_id = $path[2];
                         </a>
                     </li>
 
+                    <li class="{{ ($path[0] === 'monitoring')?'nav-active':'' }}">
+                        <a class="nav-link" href="{{route('monitoring')}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-dashboard mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M13.45 11.55l2.05 -2.05" /><path d="M6.4 20a9 9 0 1 1 12.8 0" /></svg>
+                            <span>Monitoreo</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ ($path[0] === 'backups')?'nav-active':'' }}">
+                        <a class="nav-link" href="{{route('backups')}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-database mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" /><path d="M4 6v6a8 3 0 0 0 16 0v-6" /><path d="M4 12v6a8 3 0 0 0 16 0v-6" /></svg>
+                            <span>Backups</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ ($path[0] === 'logs')?'nav-active':'' }}">
+                        <a class="nav-link" href="{{route('logs')}}" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-bug mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 9v-1a3 3 0 0 1 6 0v1" /><path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" /><path d="M3 13l4 0" /><path d="M17 13l4 0" /><path d="M12 20l0 -6" /><path d="M4 19l3.35 -2" /><path d="M20 19l-3.35 -2" /><path d="M4 7l3.75 2.4" /><path d="M20 7l-3.75 2.4" /></svg>
+                            <span>Logs</span>
+                        </a>
+                    </li>
+
                     @endif
                     @if(Request::is('company*'))
                         <li class="{{ Route::is('company') ? 'nav-active' : '' }}">
@@ -57,14 +78,6 @@ $cust_id = $path[2];
                                 <span>Eventos RADIAN</span>
                             </a>
                         </li>
-                    @endif
-                    @if(!Request::is('company*'))
-                    <li class="">
-                        <a href="{{route('logs')}}" class="nav-link" target="BLANK">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-bug mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 9v-1a3 3 0 0 1 6 0v1" /><path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" /><path d="M3 13l4 0" /><path d="M17 13l4 0" /><path d="M12 20l0 -6" /><path d="M4 19l3.35 -2" /><path d="M20 19l-3.35 -2" /><path d="M4 7l3.75 2.4" /><path d="M20 7l-3.75 2.4" /></svg>
-                            <span>Logs</span>
-                        </a>
-                    </li>
                     @endif
                 </ul>
             </nav>

@@ -299,4 +299,125 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
+    // =========================================================================
+    // MONITORING
+    // =========================================================================
+
+    public function monitoring()
+    {
+        $stats = [
+            'total_companies' => \App\Company::count(),
+            'total_documents' => \App\Document::count(),
+            'total_users' => \App\User::count(),
+            'documents_today' => \App\Document::whereDate('created_at', today())->count(),
+            'documents_this_month' => \App\Document::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
+            'server_time' => now()->format('Y-m-d H:i:s'),
+            'php_version' => phpversion(),
+            'laravel_version' => app()->version(),
+            'database_size' => $this->getDatabaseSize(),
+            'storage_usage' => $this->getStorageUsage(),
+        ];
+
+        return view('monitoring', compact('stats'));
+    }
+
+    private function getDatabaseSize()
+    {
+        try {
+            $dbName = config('database.connections.mysql.database');
+            $result = \DB::select("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size FROM information_schema.tables WHERE table_schema = '{$dbName}'");
+            return ($result[0]->size ?? 0) . ' MB';
+        } catch (\Exception $e) {
+            return 'N/A';
+        }
+    }
+
+    private function getStorageUsage()
+    {
+        try {
+            $bytes = \File::size(storage_path());
+            $mb = round($bytes / 1024 / 1024, 2);
+            return $mb . ' MB';
+        } catch (\Exception $e) {
+            return 'N/A';
+        }
+    }
+
+    // =========================================================================
+    // BACKUPS
+    // =========================================================================
+
+    public function backups()
+    {
+        $backupPath = storage_path('app/backups');
+        $backups = [];
+
+        if (\File::isDirectory($backupPath)) {
+            $files = \File::files($backupPath);
+            foreach ($files as $file) {
+                $backups[] = [
+                    'name' => $file->getFilename(),
+                    'size' => round($file->getSize() / 1024 / 1024, 2) . ' MB',
+                    'date' => \Carbon\Carbon::createFromTimestamp($file->getMTime())->format('Y-m-d H:i:s'),
+                ];
+            }
+        }
+
+        usort($backups, function($a, $b) {
+            return strcmp($b['date'], $a['date']);
+        });
+
+        return view('backups', compact('backups'));
+    }
+
+    public function backupCreate()
+    {
+        try {
+            $backupPath = storage_path('app/backups');
+            if (!\File::isDirectory($backupPath)) {
+                \File::makeDirectory($backupPath, 0755, true);
+            }
+
+            $filename = 'backup_' . date('Y-m-d_H-i-s') . '.sql';
+            $dbHost = config('database.connections.mysql.host');
+            $dbName = config('database.connections.mysql.database');
+            $dbUser = config('database.connections.mysql.username');
+            $dbPass = config('database.connections.mysql.password');
+
+            $command = "mysqldump -h {$dbHost} -u {$dbUser} -p'{$dbPass}' {$dbName} > {$backupPath}/{$filename}";
+            exec($command, $output, $returnVar);
+
+            if ($returnVar === 0) {
+                return response()->json(['success' => true, 'message' => 'Backup creado exitosamente.']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Error al crear backup.'], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function backupDownload($file)
+    {
+        $path = storage_path('app/backups/' . $file);
+        if (\File::exists($path)) {
+            return response()->download($path);
+        }
+        abort(404);
+    }
+
+    public function backupDelete($file)
+    {
+        try {
+            $path = storage_path('app/backups/' . $file);
+            if (\File::exists($path)) {
+                \File::delete($path);
+                return response()->json(['success' => true, 'message' => 'Backup eliminado.']);
+            }
+            return response()->json(['success' => false, 'message' => 'Archivo no encontrado.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al eliminar.'], 500);
+        }
+    }
 }

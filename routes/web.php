@@ -138,6 +138,15 @@ Route::group(['middleware' => ['auth', 'company.web.access']], function() {
     // logs
     Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs');
 
+    // monitoreo
+    Route::get('monitoring', 'HomeController@monitoring')->name('monitoring');
+
+    // backups
+    Route::get('backups', 'HomeController@backups')->name('backups');
+    Route::post('backups/create', 'HomeController@backupCreate')->name('backups.create');
+    Route::get('backups/download/{file}', 'HomeController@backupDownload')->name('backups.download');
+    Route::delete('backups/{file}', 'HomeController@backupDelete')->name('backups.delete');
+
 });
 
 Route::get('qr', 'QrController@generateQr');
