@@ -1,23 +1,12 @@
 @extends('layouts.app')
 @section('content')
-
-<style>
-    .filter-card { border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; }
-    .filter-card .card-body { padding: 16px 20px; }
-    .filter-card label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .filter-card .form-control { border-radius: 6px; border-color: #e2e8f0; padding: 8px 12px; font-size: 13px; }
-    .filter-card .form-control:focus { border-color: #0088CC; box-shadow: 0 0 0 3px rgba(0,136,204,0.08); }
-    .btn-nueva { background: #0088CC; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; font-size: 13px; color: #fff; transition: all 0.15s; }
-    .btn-nueva:hover { background: #006fa0; color: #fff; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,136,204,0.25); }
-</style>
-
 <header class="page-header d-flex justify-content-between align-items-center">
     <div>
         <h2>Listado de Empresas</h2>
     </div>
     <div class="right-wrapper text-end mt-auto pb-1">
         @if(auth()->user() && method_exists(auth()->user(), 'isPlatformAdmin') && auth()->user()->isPlatformAdmin())
-            <a href="{{ route('configuration_admin') }}" class="btn btn-nueva text-white mr-2">
+            <a href="{{ route('configuration_admin') }}" class="btn btn-primary btn-sm text-white mr-2">
                 <i class="fas fa-plus"></i>
                 Nueva empresa
             </a>
@@ -25,7 +14,7 @@
     </div>
 </header>
 
-<div class="card filter-card mb-3">
+<div class="card mb-3">
     <div class="card-body">
         <div class="row align-items-end">
             <div class="col-md-4">
@@ -94,7 +83,7 @@
                                     Acciones
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right" style="min-width: 200px;">
-                                    <a class="dropdown-item" href="{{ route('company.edit', $row->identification_number) }}">
+                                    <a class="dropdown-item" href="{{ route('company.production.index', $row->identification_number) }}">
                                         <i class="fas fa-edit text-primary mr-2"></i> Editar
                                     </a>
                                     <a class="dropdown-item" href="{{ route('company', $row->identification_number) }}">

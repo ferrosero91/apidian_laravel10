@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="cufeModalLabel">CUFE del documento</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -21,7 +21,7 @@
                 <small id="cufeCopiedMsg" class="text-success d-none">&#10003; Copiado al portapapeles</small>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="resultModalLabel">Consulta de CUFE</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -40,7 +40,7 @@
                 <pre id="modalBodyContent"></pre>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="responseModalLabel">Respuesta dada por el API</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -59,7 +59,7 @@
                 <pre id="modalBodyResponse"></pre>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -70,7 +70,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="responseModalLabel">Cambio de Estado</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -78,7 +78,7 @@
                 <div class="alert alert-danger">Esto cambiará el estado del documento en este listado del API, es importante que se verifique el <strong>CUFE</strong> en la DIAN donde se muestre como ACEPTADO para continuar con este procedimiento.</div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <form action="{{ route('document.change-state') }}" method="POST">
                     @csrf
                     <input type="hidden" name="document_id" id="verificarInput" value=""/>

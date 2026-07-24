@@ -1,40 +1,3 @@
-<style>
-    .page-header { border-bottom: 1px solid #e9ecef; padding-bottom: 15px; margin-bottom: 20px; }
-    .page-header h2 { font-size: 22px; font-weight: 600; color: #2B323D; margin: 0; }
-    .page-header .text-muted { font-size: 13px; }
-    .doc-card { border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-    .doc-table { margin-bottom: 0; }
-    .doc-table thead th { background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #6c757d; letter-spacing: 0.5px; padding: 10px 10px; vertical-align: middle; white-space: nowrap; }
-    .doc-table tbody td { padding: 8px 10px; vertical-align: middle; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
-    .doc-table tbody tr:hover { background-color: #f8f9fa; }
-    .doc-table .text-right { text-align: right; }
-    .btn-xs { padding: 3px 8px; font-size: 11px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; }
-    .btn-dian { background-color: #6c757d; color: #fff; }
-    .btn-dian:hover { background-color: #5a6268; color: #fff; }
-    .btn-cufe { background-color: #007bff; color: #fff; }
-    .btn-cufe:hover { background-color: #0069d9; color: #fff; }
-    .btn-xml { background-color: #28a745; color: #fff; }
-    .btn-xml:hover { background-color: #218838; color: #fff; }
-    .btn-pdf { background-color: #dc3545; color: #fff; }
-    .btn-pdf:hover { background-color: #c82333; color: #fff; }
-    .btn-nota { background-color: #17a2b8; color: #fff; }
-    .btn-nota:hover { background-color: #138496; color: #fff; }
-    .btn-resend { background-color: #fd7e14; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
-    .btn-resend:hover { background-color: #e8590c; color: #fff; }
-    .badge-val { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-    .badge-val-si { background-color: #28a745; color: #fff; }
-    .badge-val-no { background-color: #dc3545; color: #fff; }
-    .badge-amb { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-    .badge-amb-prod { background-color: #28a745; color: #fff; }
-    .badge-amb-hab { background-color: #ffc107; color: #212529; }
-    .client-name { font-weight: 600; color: #2B323D; }
-    .client-doc { font-size: 12px; color: #6c757d; }
-    .doc-number { font-weight: 700; color: #2B323D; font-family: 'Courier New', monospace; font-size: 13px; }
-    .pagination { margin: 0; }
-    .card-footer { background: #f8f9fa; border-top: 1px solid #e9ecef; }
-    pre#modalBodyContent, pre#modalBodyResponse { background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 12px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
-</style>
-
 <header class="page-header d-flex justify-content-between align-items-center">
     <div>
         <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
@@ -83,9 +46,9 @@
     </div>
 </div>
 @else
-<div class="card doc-card">
+<div class="card">
     <div class="table-responsive">
-        <table class="table table-sm doc-table">
+        <table class="table table-sm table-striped table-hover">
             <thead class="thead-light">
                 <tr>
                     <th>#</th>
@@ -109,59 +72,47 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>
                             @if($row->response_dian)
-                                <button type="button" class="btn btn-xs btn-dian modalApiResponse"
+                                <button type="button" class="btn btn-primary btn-xs modalApiResponse"
                                     data-content="{{ $row->response_dian }}">
                                     Respuesta DIAN
                                 </button>
                                 <br>
                             @endif
                             @if($row->cufe)
-                                <button type="button" class="btn btn-xs btn-cufe btn-ver-cufe mt-1"
+                                <button type="button" class="btn btn-primary btn-xs btn-ver-cufe mt-1"
                                     data-cufe="{{ $row->cufe }}">
                                     Ver CUFE
                                 </button>
                                 <br>
-                                <button type="button" class="btn btn-xs btn-cufe makeApiRequest mt-1"
+                                <button type="button" class="btn btn-primary btn-xs makeApiRequest mt-1"
                                     data-id="{{ $row->cufe }}">
                                     Consultar Xml
                                 </button>
                                 <br>
                             @endif
                             @if(!$row->state_document_id)
-                                <button type="button" class="btn btn-xs btn-dian modalChangeState mt-1"
+                                <button type="button" class="btn btn-primary btn-xs modalChangeState mt-1"
                                     data-id="{{ $row->id }}">
                                     ESTADO
                                 </button>
                             @endif
                         </td>
                         <td>
-                            <a class="btn btn-xs btn-xml text-white"
+                            <a class="btn btn-success btn-xs text-white"
                                 role="button"
                                 href="{{ url('/api/view/'.$row->identification_number.'/'.$row->xml) }}" target="_BLANK">
                                 XML
                             </a>
-                            <a class="btn btn-xs btn-pdf text-white mt-1"
+                            <a class="btn btn-success btn-xs text-white mt-1"
                                 role="button"
                                 href="{{ url('/api/view/'.$row->identification_number.'/'.$row->pdf) }}" target="_BLANK">
                                 PDF
                             </a>
                         </td>
-                        <td>
-                            @if($row->ambient_id === 2)
-                                <span class="badge-amb badge-amb-hab">Habilitación</span>
-                            @else
-                                <span class="badge-amb badge-amb-prod">Producción</span>
-                            @endif
-                        </td>
-                        <td class="text-center">
-                            @if($row->state_document_id)
-                                <span class="badge-val badge-val-si">Si</span>
-                            @else
-                                <span class="badge-val badge-val-no">No</span>
-                            @endif
-                        </td>
+                        <td>{{ $row->ambient_id === 2 ? 'Habilitación' : 'Producción' }}</td>
+                        <td class="text-center">{{ $row->state_document_id ? 'Si' : 'No' }}</td>
                         <td>{{ $row->date_issue }}</td>
-                        <td><span class="doc-number">{{ $row->prefix }}{{ $row->number }}</span></td>
+                        <td>{{ $row->prefix }}{{ $row->number }}</td>
                         <td>
                             @inject('typeDocuments', 'App\TypeDocumentIdentification')
                             @php
@@ -173,7 +124,7 @@
                                 {{dd($row->client)}}
                             @endif --}}
                             {{ $row->client->name ?? 'Sin nombre' }}<br>
-                            <span class="client-doc">{{ $document_type != null ? $document_type->name : '' }} {{ $row->client->identification_number ?? 'sin identificación' }}-{{ $row->client->dv ?? ""}}</span></td>
+                            {{ $document_type != null ? $document_type->name : '' }} {{ $row->client->identification_number ?? 'sin identificación' }}-{{ $row->client->dv ?? ""}}</td>
                         <td>{{ $row->type_document->name }}</td>
                         <td class="text-right">{{ round($row->total_tax, 2) }}</td>
                         <td class="text-right">{{ round($row->subtotal, 2) }}</td>
@@ -189,22 +140,13 @@
                                     }
                                 @endphp
                                 @if($isValidResponse)
-                                    <button type="button" class="btn btn-xs btn-nota btn-credit-note mt-0"
+                                    <button type="button" class="btn btn-info btn-xs btn-credit-note mt-0"
                                         data-id="{{ $row->id }}"
                                         data-cufe="{{ $row->cufe }}"
                                         data-request-api="{{ $row->request_api }}">
                                         Nota de crédito
                                     </button>
                                 @endif
-                            @endif
-                            @if(!$row->state_document_id && $row->response_dian)
-                                <button type="button" class="btn btn-xs btn-resend mt-1"
-                                    data-id="{{ $row->id }}"
-                                    data-cufe="{{ $row->cufe }}"
-                                    data-prefix="{{ $row->prefix }}"
-                                    data-number="{{ $row->number }}">
-                                    <i class="fas fa-redo"></i> Reenviar
-                                </button>
                             @endif
                         </td>
                     </tr>
@@ -218,42 +160,18 @@
     </div>
 </div>
 @endif
-
-<!-- Modal Ver CUFE -->
-<div class="modal fade" id="cufeModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-fingerprint mr-2"></i>CUFE del documento</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-muted mb-2">Código Único de Factura Electrónica:</p>
-                <div class="input-group">
-                    <input type="text" id="cufeValue" class="form-control" readonly style="font-family: monospace; font-size: 12px;">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="copyCufeBtn"><i class="fas fa-copy"></i> Copiar</button>
-                    </div>
-                </div>
-                <small id="cufeCopiedMsg" class="text-success d-none mt-2"><i class="fas fa-check"></i> Copiado al portapapeles</small>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Consulta XML -->
-<div class="modal fade" id="resultModal" tabindex="-1" role="dialog">
+<!-- Modal -->
+{{-- <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-code mr-2"></i>Consulta de Documento</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h5 class="modal-title" id="resultModalLabel">Consulta de CUFE</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                <pre id="modalBodyContent" style="background:#f8f9fa;padding:15px;border-radius:6px;font-size:12px;max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;"></pre>
+                <pre id="modalBodyContent"></pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -261,17 +179,18 @@
         </div>
     </div>
 </div>
-
-<!-- Modal Respuesta DIAN -->
-<div class="modal fade" id="responseModal" tabindex="-1" role="dialog">
+<!-- Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-labelledby="responseModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-server mr-2"></i>Respuesta de la DIAN</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h5 class="modal-title" id="responseModalLabel">Respuesta dada por el API</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                <pre id="modalBodyResponse" style="background:#f8f9fa;padding:15px;border-radius:6px;font-size:12px;max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;"></pre>
+                <pre id="modalBodyResponse"></pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -279,32 +198,135 @@
         </div>
     </div>
 </div>
-
-<!-- Modal Cambio Estado -->
-<div class="modal fade" id="changeStateModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+<!-- Modal -->
+<div class="modal fade" id="changeStateModal" tabindex="-1" role="dialog" aria-labelledby="responseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-exchange-alt mr-2"></i>Cambio de Estado</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h5 class="modal-title" id="responseModalLabel">Cambio de Estado</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-warning mb-0">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                    Esto cambiará el estado del documento. Verifique el <strong>CUFE</strong> en la DIAN como ACEPTADO antes de continuar.
-                </div>
+                <div class="alert alert-danger">Esto cambiará el estado del documento en este listado del API, es importante que se verifique el <strong>CUFE</strong> en la DIAN donde se muestre como ACEPTADO para continuar con este procedimiento.</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <form action="{{ route('document.change-state') }}" method="POST" style="display:inline;">
+                <form action="{{ route('document.change-state') }}" method="POST">
                     @csrf
                     <input type="hidden" name="document_id" id="verificarInput" value=""/>
-                    <button type="submit" class="btn btn-success"><i class="fas fa-check mr-1"></i> Confirmar</button>
+                    <button type="submit" class="btn btn-success">Confirmar</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Excel a JSON -->
+<div class="modal fade" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="excelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center">
+                <h5 class="modal-title mr-3" id="excelModalLabel">
+                    <i class="fas fa-upload mr-2"></i>Subida Masiva de Facturas
+                </h5>
+                <a href="{{ asset('xlsx/co-documents-batch.xlsx') }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-download mr-1"></i>Descargar Plantilla
+                </a>
+                <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="excelFile" class="font-weight-bold d-block">
+                        <i class="fas fa-upload mr-2"></i>Archivo Excel
+                    </label>
+                    <input type="file" class="form-control-file" id="excelFile" accept=".xls,.xlsx">
+                </div>
+                <div class="progress mt-3 d-none" id="progressBar">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+                </div>
+                <div class="card border mt-4">
+                    <div class="card-header">
+                        <i class="fas fa-list-alt mr-2"></i>Resultado del Procesamiento
+                    </div>
+                    <div id="apiResults" class="card-body bg-light" style="max-height: 300px; overflow-y: auto; font-family: monospace;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times mr-2"></i>Cerrar
+                </button>
+                <button type="button" class="btn btn-success d-none" id="finishProcess" onclick="location.reload()">
+                    <i class="fas fa-check mr-2"></i>Finalizar
+                </button>
+                <button type="button" class="btn btn-primary" id="processInvoices">
+                    <i class="fas fa-cogs mr-2"></i>Procesar Facturas
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Selección de Resolución para Nota de Crédito -->
+<div class="modal fade" id="resolutionModal" tabindex="-1" role="dialog" aria-labelledby="resolutionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resolutionModalLabel">
+                    <i class="fas fa-file-invoice mr-2"></i>Seleccionar Resolución para Nota de Crédito
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Seleccione la resolución que desea utilizar para generar la nota de crédito.
+                </div>
+                <div class="list-group" id="resolutionList">
+                    @if($resolution_credit_notes)
+                        @foreach($resolution_credit_notes as $resolution)
+                            <button type="button" class="list-group-item list-group-item-action resolution-item"
+                                data-resolution-id="{{ $resolution->id }}"
+                                data-resolution-prefix="{{ $resolution->prefix }}"
+                                data-resolution-number="{{ $resolution->resolution_number ?? $resolution->resolution ?? '' }}"
+                                data-resolution-has-number="{{ ($resolution->resolution_number ?? $resolution->resolution) ? 'true' : 'false' }}">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ $resolution->prefix }}</h6>
+                                    <small>{{ $resolution->type_document->name ?? 'Nota de Crédito' }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    <strong>Resolución:</strong>
+                                    @if($resolution->resolution_number ?? $resolution->resolution)
+                                        {{ $resolution->resolution_number ?? $resolution->resolution }}
+                                    @else
+                                        <span class="text-danger">Sin número de resolución</span>
+                                    @endif
+                                </p>
+                                <small>
+                                    <strong>Rango:</strong> {{ $resolution->from }} - {{ $resolution->to }}
+                                    @if($resolution->date_from && $resolution->date_to)
+                                        | <strong>Vigencia:</strong> {{ $resolution->date_from }} - {{ $resolution->date_to }}
+                                    @endif
+                                </small>
+                            </button>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times mr-2"></i>Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div> --}}
+
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -621,69 +643,6 @@ $(document).ready(function() {
         var id = $(this).data('id');
         $('#verificarInput').val(id);
         $('#changeStateModal').modal('show');
-    });
-
-    // Reenviar documento rechazado
-    $(document).off('click', '.btn-resend');
-    $(document).on('click', '.btn-resend', function() {
-        var $btn = $(this);
-        var docId = $btn.data('id');
-        var prefix = $btn.data('prefix');
-        var number = $btn.data('number');
-
-        if (!confirm('¿Desea reenviar el documento ' + prefix + number + ' a la DIAN?')) return;
-
-        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Enviando...');
-
-        // Buscar el request_api del documento en la tabla
-        var $row = $btn.closest('tr');
-        var requestData = null;
-
-        // Intentar obtener el request_api del atributo data del boton de nota de credito
-        var $creditBtn = $row.find('.btn-credit-note');
-        if ($creditBtn.length) {
-            try {
-                requestData = $creditBtn.data('request-api');
-            } catch(e) {}
-        }
-
-        if (!requestData) {
-            // Si no hay request_api, intentar desde la respuesta DIAN
-            var $dianBtn = $row.find('.modalApiResponse');
-            if ($dianBtn.length) {
-                try {
-                    var respContent = $dianBtn.data('content');
-                    if (typeof respContent === 'string') respContent = JSON.parse(respContent);
-                } catch(e) {}
-            }
-        }
-
-        $.ajax({
-            url: '/api/ubl2.1/senddocument',
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + '{{ $company->user->api_token }}',
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            data: JSON.stringify({
-                document_id: docId
-            }),
-            success: function(response) {
-                if (response.success) {
-                    new PNotify({ text: response.message || 'Documento reenviado exitosamente', type: 'success', addclass: 'notification-success', delay: 3000 });
-                    setTimeout(function() { location.reload(); }, 1500);
-                } else {
-                    new PNotify({ text: response.message || 'Error al reenviar', type: 'error', addclass: 'notification-danger', delay: 5000 });
-                    $btn.prop('disabled', false).html('<i class="fas fa-redo"></i> Reenviar');
-                }
-            },
-            error: function(xhr) {
-                var msg = xhr.responseJSON?.message || 'Error al reenviar el documento';
-                new PNotify({ text: msg, type: 'error', addclass: 'notification-danger', delay: 5000 });
-                $btn.prop('disabled', false).html('<i class="fas fa-redo"></i> Reenviar');
-            }
-        });
     });
 
     // Variable global para almacenar los datos del documento actual
