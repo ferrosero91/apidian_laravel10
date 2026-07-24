@@ -84,7 +84,7 @@ WORKDIR /var/www/html
 COPY --chown=www-data:www-data . /var/www/html/
 
 # Instalar dependencias Node.js y compilar assets
-RUN npm install --legacy-peer-deps && npm run production
+RUN npm install --legacy-peer-deps && NODE_OPTIONS=--openssl-legacy-provider npm run production
 
 # Limpiar node_modules después del build para reducir tamaño
 RUN rm -rf node_modules
