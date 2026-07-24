@@ -83,7 +83,7 @@
                                     Acciones
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right" style="min-width: 200px;">
-                                    <a class="dropdown-item" href="{{ route('company.edit', $row->identification_number) }}">
+                                    <a class="dropdown-item" href="{{ route('company.production.index', $row->identification_number) }}">
                                         <i class="fas fa-edit text-primary mr-2"></i> Editar
                                     </a>
                                     <a class="dropdown-item" href="{{ route('company', $row->identification_number) }}">
