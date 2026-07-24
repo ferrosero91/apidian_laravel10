@@ -223,8 +223,7 @@ class InvoiceContingencyController extends Controller
         else
             $orderreference = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Additional document reference
         $AdditionalDocumentReferenceID = $request->AdditionalDocumentReferenceID;
@@ -755,8 +754,7 @@ class InvoiceContingencyController extends Controller
         else
             $orderreference = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Payment form
         if(isset($request->payment_form['payment_form_id']))
@@ -1222,8 +1220,7 @@ class InvoiceContingencyController extends Controller
         else
             $orderreference = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Additional document reference
         $AdditionalDocumentReferenceID = $request->AdditionalDocumentReferenceID;

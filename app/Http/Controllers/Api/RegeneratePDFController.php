@@ -315,8 +315,7 @@ class RegeneratePDFController extends Controller
             else
                 $orderreference = NULL;
 
-            // Health Fields (Enterprise) deshabilitado en Community
-            $healthfields = NULL;
+            $healthfields = $request->health_fields ?? NULL;
 
             // Discrepancy response
             if(isset($request->discrepancyresponsecode))
