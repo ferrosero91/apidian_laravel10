@@ -68,6 +68,9 @@ Route::group(['middleware' => ['auth', 'company.web.access']], function() {
     Route::get('/company/{company}/edit', 'HomeController@edit')->name('company.edit');
     Route::get('/company/{company}/document/{cufe}', 'HomeController@getXml')->name('getXml');
     Route::get('/company/{company}/events', 'HomeController@events')->name('company.events');
+    Route::get('/companies/{company}', function($company) {
+        return redirect()->route('company', $company);
+    });
     Route::get('/documents', 'HomeController@listDocuments')->name('listdocuments');
     Route::get('/taxes', 'HomeController@listTaxes')->name('listtaxes');
     Route::get('/listconfigurations', 'HomeController@listConfigurations')->name('listconfigurations');
