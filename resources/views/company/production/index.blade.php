@@ -352,8 +352,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var apiToken = '{{ $company->user->api_token }}';
     var currentTemplate = {{ $company->graphic_representation_template ?? 1 }};
 
-    function loadTemplates() {
-        var container = document.getElementById('template-gallery');
+    function loadTemplates(containerId) {
+        var container = document.getElementById(containerId || 'template-gallery');
         if (!container) return;
 
         fetch('/api/ubl2.1/config/templates', {
@@ -381,6 +381,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += '</div>';
                 });
                 container.innerHTML = html;
+
+                // Also update support template gallery if it exists
+                var supportContainer = document.getElementById('support-template-gallery');
+                if (supportContainer && containerId !== 'support-template-gallery') {
+                    supportContainer.innerHTML = html;
+                }
             }
         })
         .catch(function(error) {
@@ -429,7 +435,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var templateTab = document.getElementById('invoice-template-tab');
     if (templateTab) {
         templateTab.addEventListener('shown.bs.tab', function() {
-            loadTemplates();
+            loadTemplates('template-gallery');
+        });
+    }
+
+    // Load templates for support tab
+    var supportTemplateTab = document.getElementById('support-template-tab');
+    if (supportTemplateTab) {
+        supportTemplateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates('support-template-gallery');
         });
     }
 });
@@ -628,6 +642,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         Resoluciones
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="support-template-tab" data-bs-toggle="tab" data-bs-target="#support-template" type="button" role="tab"
+                        aria-controls="support-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="supportSubTabsContent">
                 <div class="tab-pane fade show active" id="support-list" role="tabpanel" aria-labelledby="support-list-tab">
@@ -656,10 +678,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         'resolutionTypeDocuments' => $supportData['resolutionTypeDocuments'] ?? collect(),
                     ])
                 </div>
+                <div class="tab-pane fade" id="support-template" role="tabpanel" aria-labelledby="support-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Documento Soporte para esta empresa.</p>
+                        <div class="row" id="support-template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Eventos RADIAN -->
         <div class="tab-pane fade mt-2" id="event" role="tabpanel" aria-labelledby="event-tab">
             <header class="page-header d-flex justify-content-between align-items-center mb-3">
                 <div>
