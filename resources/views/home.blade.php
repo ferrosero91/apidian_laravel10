@@ -2,27 +2,13 @@
 @section('content')
 
 <style>
-    .page-header { border-bottom: 1px solid #e9ecef; padding-bottom: 15px; margin-bottom: 20px; }
-    .page-header h2 { font-size: 22px; font-weight: 600; color: #2B323D; margin: 0; }
-    .search-card { border: 1px solid #e9ecef; border-radius: 8px; }
-    .search-card .form-control { border-radius: 6px; border-color: #dee2e6; }
-    .search-card .form-control:focus { border-color: #0088CC; box-shadow: 0 0 0 2px rgba(0,136,204,0.15); }
-    .table { margin-bottom: 0; }
-    .table thead th { background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-weight: 600; font-size: 12px; text-transform: uppercase; color: #6c757d; letter-spacing: 0.3px; padding: 10px 12px; vertical-align: middle; }
-    .table tbody td { padding: 10px 12px; vertical-align: middle; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
-    .table tbody tr:hover { background-color: #f8f9fa; }
-    .badge-env { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-    .badge-produccion { background-color: #28a745; color: #fff; }
-    .badge-habilitacion { background-color: #ffc107; color: #212529; }
-    .badge-activa { background-color: #28a745; color: #fff; }
-    .badge-inactiva { background-color: #dc3545; color: #fff; }
-    .badge-docs { background-color: #17a2b8; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-    .btn-acciones { border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 500; color: #495057; background: #fff; }
-    .btn-acciones:hover { background: #f8f9fa; border-color: #adb5bd; }
-    .dropdown-menu { border: 1px solid #e9ecef; box-shadow: 0 4px 16px rgba(0,0,0,0.1); border-radius: 8px; padding: 6px 0; }
-    .dropdown-item { padding: 7px 16px; font-size: 13px; }
-    .dropdown-item:hover { background-color: #f0f7ff; }
-    .dropdown-divider { margin: 4px 0; }
+    .filter-card { border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; }
+    .filter-card .card-body { padding: 16px 20px; }
+    .filter-card label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .filter-card .form-control { border-radius: 6px; border-color: #e2e8f0; padding: 8px 12px; font-size: 13px; }
+    .filter-card .form-control:focus { border-color: #0088CC; box-shadow: 0 0 0 3px rgba(0,136,204,0.08); }
+    .btn-nueva { background: #0088CC; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; font-size: 13px; color: #fff; transition: all 0.15s; }
+    .btn-nueva:hover { background: #006fa0; color: #fff; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,136,204,0.25); }
 </style>
 
 <header class="page-header d-flex justify-content-between align-items-center">
@@ -31,7 +17,7 @@
     </div>
     <div class="right-wrapper text-end mt-auto pb-1">
         @if(auth()->user() && method_exists(auth()->user(), 'isPlatformAdmin') && auth()->user()->isPlatformAdmin())
-            <a href="{{ route('configuration_admin') }}" class="btn btn-primary btn-sm text-white mr-2">
+            <a href="{{ route('configuration_admin') }}" class="btn btn-nueva text-white mr-2">
                 <i class="fas fa-plus"></i>
                 Nueva empresa
             </a>
@@ -39,7 +25,7 @@
     </div>
 </header>
 
-<div class="card mb-3">
+<div class="card filter-card mb-3">
     <div class="card-body">
         <div class="row align-items-end">
             <div class="col-md-4">
