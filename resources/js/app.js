@@ -31,16 +31,21 @@ Vue.component('configurations-form-admin', require('./views/configurations/forma
 Vue.component('documents-index', require('./views/documents/index.vue').default);
 Vue.component('taxes-index', require('./views/taxes/index.vue').default);
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+// Reusable components
+Vue.component('data-table', require('./components/DataTable.vue').default);
+Vue.component('data-form', require('./components/DataForm.vue').default);
 
-// const files = require.context('./', true, /\.vue$/i);
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+// Company management components
+Vue.component('companies-index', require('./views/companies/index.vue').default);
+Vue.component('company-documents', require('./views/companies/documents.vue').default);
+Vue.component('company-resolutions', require('./views/companies/resolutions.vue').default);
+
+// Customer components
+Vue.component('customers-index', require('./views/customers/index.vue').default);
+
+// Owner/Seller document components
+Vue.component('owner-documents', require('./views/owner/documents.vue').default);
+Vue.component('seller-documents', require('./views/seller/documents.vue').default);
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
