@@ -394,6 +394,7 @@
 
 @push('scripts')
 <script>
+(function() {
     let currentStep = 1;
     const totalSteps = 4;
 
@@ -443,6 +444,7 @@
             }
         });
     });
+})();
 </script>
 @endpush
 

@@ -1420,20 +1420,22 @@ class ConfigurationController extends Controller
     public function updateTemplate(Request $request)
     {
         $request->validate([
-            'id' => 'required|string'
+            'id' => 'required'
         ]);
 
         $company = auth()->user()->company;
 
+        $templateId = (string) $request->id;
+
         // Validar si el template existe en la carpeta
-        $templatePath = resource_path("views/pdfs/invoice/template{$request->id}.blade.php");
+        $templatePath = resource_path("views/pdfs/invoice/template{$templateId}.blade.php");
 
         if (!File::exists($templatePath)) {
             return response()->json(['error' => 'La plantilla no existe.'], 404);
         }
 
         // Guardar en BD
-        $company->graphic_representation_template = $request->id;
+        $company->graphic_representation_template = $templateId;
         $company->save();
 
         return response()->json([

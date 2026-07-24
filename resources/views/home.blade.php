@@ -15,26 +15,7 @@
         @endif
     </div>
 </header>
-<div class="card mb-3">
-    <div class="card-body">
-        <div class="row align-items-end">
-            <!-- Filtro primero -->
-            <div class="col-md-4">
-                <label><strong>Filtrar por</strong></label>
-                <select id="filter-type" class="form-control" clearable>
-                    <option value="nit">NIT</option>
-                    <option value="email">Correo</option>
-                    <option value="name">Nombre</option>
-                </select>
-            </div>
-            <!-- Barra de búsqueda a la derecha -->
-            <div class="col-md-8">
-                <label><strong>Búsqueda</strong></label>
-                <input type="text" id="filter-text" class="form-control" placeholder="Escribe para buscar...">
-            </div>
-        </div>
-    </div>
-</div>
+
 <div class="card">
     <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -477,37 +458,7 @@ window.redirectTo = function(url) {
     window.location.href = url;
 }
 document.addEventListener("DOMContentLoaded", function () {
-
-    const filterText = document.getElementById("filter-text");
-    const filterType = document.getElementById("filter-type");
-
-    const tableRows = document.querySelectorAll("table tbody tr");
-
-    function applyFilter() {
-        const value = filterText.value.toLowerCase().trim();
-        const type = filterType.value;
-
-        tableRows.forEach(row => {
-            let columnText = "";
-
-            if (type === "nit") {
-                columnText = row.children[1].textContent.toLowerCase(); // NIT
-            } else if (type === "email") {
-                columnText = row.children[4].textContent.toLowerCase(); // email
-            } else if (type === "name") {
-                columnText = row.children[3].textContent.toLowerCase(); // nombre
-            }
-
-            if (columnText.includes(value)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
-
-    filterText.addEventListener("keyup", applyFilter);
-    filterType.addEventListener("change", applyFilter);
+    // Filter removed - table is now directly visible
 });
 // Datos de certificado por empresa (generados server-side)
 window.companyCertificateData = {
