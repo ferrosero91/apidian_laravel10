@@ -54,8 +54,8 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td><strong>{{ $row->identification_number }}-{{ $row->dv }}</strong></td>
-                        <td>{{ strtoupper($row->user->name ?? '') }}</td>
-                        <td>{{ $row->user->email ?? '' }}</td>
+                        <td>{{ strtoupper($row->user->name) }}</td>
+                        <td>{{ $row->user->email }}</td>
                         <td>
                             @if($row->type_environment_id == 1)
                                 <span class="badge badge-success" style="background-color: #28a745; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px;">Producción</span>
