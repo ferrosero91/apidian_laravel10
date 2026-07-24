@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Header -->
     <header class="page-header d-flex justify-content-between align-items-center">
       <div>
         <h2>Listado de Empresas</h2>
@@ -12,124 +11,127 @@
       </div>
     </header>
 
-    <!-- Filters -->
     <div class="card mb-3">
       <div class="card-body">
         <div class="row align-items-end">
           <div class="col-md-4">
             <label><strong>Filtrar por</strong></label>
-            <el-select v-model="filterType" placeholder="Seleccionar" style="width: 100%;">
-              <el-option label="NIT" value="nit"></el-option>
-              <el-option label="Correo" value="email"></el-option>
-              <el-option label="Nombre" value="name"></el-option>
-            </el-select>
+            <select v-model="filterType" class="form-control">
+              <option value="nit">NIT</option>
+              <option value="email">Correo</option>
+              <option value="name">Nombre</option>
+            </select>
           </div>
           <div class="col-md-8">
             <label><strong>Búsqueda</strong></label>
-            <el-input
-              v-model="filterText"
-              placeholder="Buscar empresa por NIT, nombre o correo..."
-              prefix-icon="el-icon-search"
-              clearable
-            ></el-input>
+            <input type="text" v-model="filterText" class="form-control" placeholder="Buscar empresa por NIT, nombre o correo...">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Table -->
     <div class="card">
-      <div class="card-body p-0">
-        <el-table
-          :data="filteredCompanies"
-          stripe
-          style="width: 100%"
-          empty-text="No hay empresas registradas"
-        >
-          <el-table-column prop="index" label="#" width="60" align="center"></el-table-column>
-          <el-table-column label="NIT" width="150">
-            <template slot-scope="scope">
-              <strong>{{ scope.row.identification_number }}-{{ scope.row.dv }}</strong>
-            </template>
-          </el-table-column>
-          <el-table-column prop="company_name" label="Empresa" min-width="180"></el-table-column>
-          <el-table-column prop="email" label="Email" min-width="200"></el-table-column>
-          <el-table-column label="Ambiente" width="130" align="center">
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.type_environment_id === 1 ? 'success' : 'warning'" size="small">
-                {{ scope.row.type_environment_id === 1 ? 'Producción' : 'Habilitación' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="Estado" width="100" align="center">
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.state ? 'success' : 'danger'" size="small">
-                {{ scope.row.state ? 'Activa' : 'Inactiva' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="total_documents" label="Docs" width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag type="info" size="small">{{ scope.row.total_documents }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="Fecha" width="120">
-            <template slot-scope="scope">
-              <span style="font-size: 12px; color: #666;">
-                {{ scope.row.created_at_formatted }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Acciones" width="120" align="center" fixed="right">
-            <template slot-scope="scope">
-              <el-dropdown trigger="click" @command="handleCommand($event, scope.row)">
-                <el-button size="mini" type="primary" plain>
-                  Acciones <i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item :command="'edit-' + scope.row.id">
-                    <i class="fas fa-edit text-primary mr-2"></i> Editar
-                  </el-dropdown-item>
-                  <el-dropdown-item :command="'documents-' + scope.row.id">
-                    <i class="fas fa-file-alt text-success mr-2"></i> Ver Documentos
-                  </el-dropdown-item>
-                  <el-dropdown-item :command="'environment-' + scope.row.id">
-                    <i class="fas fa-exchange-alt text-info mr-2"></i> Cambiar Ambiente
-                  </el-dropdown-item>
-                  <el-dropdown-item :command="'toggle-' + scope.row.id">
-                    <i :class="scope.row.state ? 'fas fa-ban text-warning' : 'fas fa-check-circle text-success'" class="mr-2"></i>
-                    {{ scope.row.state ? 'Deshabilitar' : 'Habilitar' }}
-                  </el-dropdown-item>
-                  <el-dropdown-item divided :command="'delete-' + scope.row.id">
-                    <i class="fas fa-trash text-danger mr-2"></i> Eliminar
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <div class="card-footer text-center">
-        <span class="text-muted">Cantidad de empresas registradas: {{ companies.length }}</span>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th style="width: 50px;">#</th>
+              <th>NIT</th>
+              <th>Empresa</th>
+              <th>Email</th>
+              <th>Ambiente</th>
+              <th>Estado</th>
+              <th style="text-align: center;">Docs</th>
+              <th>Fecha</th>
+              <th style="text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, index) in filteredCompanies" :key="row.id">
+              <td>{{ index + 1 }}</td>
+              <td><strong>{{ row.identification_number }}-{{ row.dv }}</strong></td>
+              <td>{{ row.company_name }}</td>
+              <td>{{ row.email }}</td>
+              <td>
+                <span :class="row.type_environment_id === 1 ? 'badge badge-success' : 'badge badge-warning'" style="padding: 4px 10px; border-radius: 4px; font-size: 12px;">
+                  {{ row.type_environment_id === 1 ? 'Producción' : 'Habilitación' }}
+                </span>
+              </td>
+              <td>
+                <span :class="row.state ? 'badge badge-success' : 'badge badge-danger'" style="padding: 4px 10px; border-radius: 4px; font-size: 12px;">
+                  {{ row.state ? 'Activa' : 'Inactiva' }}
+                </span>
+              </td>
+              <td style="text-align: center;">
+                <span class="badge badge-info" style="padding: 4px 10px; border-radius: 4px; font-size: 12px;">{{ row.total_documents }}</span>
+              </td>
+              <td style="font-size: 12px; color: #666;">
+                {{ row.created_at_formatted }}
+              </td>
+              <td style="text-align: right;">
+                <div class="dropdown" style="display: inline-block;">
+                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                    Acciones
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right" style="min-width: 200px;">
+                    <a class="dropdown-item" :href="'/companies/' + row.identification_number + '/production'">
+                      <i class="fas fa-edit text-primary mr-2"></i> Editar
+                    </a>
+                    <a class="dropdown-item" :href="'/company/' + row.identification_number">
+                      <i class="fas fa-file-alt text-success mr-2"></i> Ver Documentos
+                    </a>
+                    <a class="dropdown-item" href="javascript:;" @click="openChangeEnvironmentModal(row)">
+                      <i class="fas fa-exchange-alt text-info mr-2"></i> Cambiar Ambiente
+                    </a>
+                    <a class="dropdown-item" href="javascript:;" @click="toggleState(row)">
+                      <i :class="row.state ? 'fas fa-ban text-warning' : 'fas fa-check-circle text-success'" class="mr-2"></i>
+                      {{ row.state ? 'Deshabilitar' : 'Habilitar' }}
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="javascript:;" @click="deleteCompany(row)">
+                      <i class="fas fa-trash text-danger mr-2"></i> Eliminar
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="9" class="text-center" style="padding: 12px;">
+                <span class="text-muted">Cantidad de empresas registradas: {{ companies.length }}</span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     </div>
 
-    <!-- Modal Cambiar Ambiente -->
-    <el-dialog title="Cambiar Ambiente" :visible.sync="showEnvironmentModal" width="400px">
-      <p>Empresa: <strong>{{ selectedCompany.nit }}</strong></p>
-      <el-form label-position="top">
-        <el-form-item label="Ambiente">
-          <el-select v-model="selectedCompany.environment" style="width: 100%;">
-            <el-option label="Producción" :value="1"></el-option>
-            <el-option label="Habilitación (Pruebas)" :value="2"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showEnvironmentModal = false">Cancelar</el-button>
-        <el-button type="primary" @click="saveEnvironment" :loading="saving">Guardar</el-button>
-      </span>
-    </el-dialog>
+    <div class="modal fade" id="changeEnvironmentModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Cambiar Ambiente</h5>
+            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <p>Empresa: <strong>{{ selectedCompany.nit }}</strong></p>
+            <input type="hidden" id="env-company-id" :value="selectedCompany.id">
+            <div class="form-group">
+              <label>Ambiente</label>
+              <select v-model="selectedCompany.environment" class="form-control">
+                <option :value="1">Producción</option>
+                <option :value="2">Habilitación (Pruebas)</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" @click="saveEnvironment">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -139,14 +141,15 @@ export default {
   props: {
     companiesData: {
       type: Array,
-      required: true
+      required: true,
+      default: function() { return []; }
     },
     isAdmin: {
       type: Boolean,
       default: false
     }
   },
-  data() {
+  data: function() {
     return {
       companies: [],
       filterType: 'nit',
@@ -161,21 +164,21 @@ export default {
     };
   },
   computed: {
-    filteredCompanies() {
-      let filtered = this.companies.map((company, index) => ({
-        ...company,
-        index: index + 1
-      }));
+    filteredCompanies: function() {
+      var self = this;
+      var filtered = self.companies.map(function(company, index) {
+        return Object.assign({}, company, { index: index + 1 });
+      });
 
-      if (this.filterText) {
-        const search = this.filterText.toLowerCase().trim();
-        filtered = filtered.filter(company => {
-          if (this.filterType === 'nit') {
-            return (company.identification_number + '-' + company.dv).toLowerCase().includes(search);
-          } else if (this.filterType === 'email') {
-            return (company.email || '').toLowerCase().includes(search);
-          } else if (this.filterType === 'name') {
-            return (company.company_name || '').toLowerCase().includes(search);
+      if (self.filterText) {
+        var search = self.filterText.toLowerCase().trim();
+        filtered = filtered.filter(function(company) {
+          if (self.filterType === 'nit') {
+            return (company.identification_number + '-' + company.dv).toLowerCase().indexOf(search) !== -1;
+          } else if (self.filterType === 'email') {
+            return (company.email || '').toLowerCase().indexOf(search) !== -1;
+          } else if (self.filterType === 'name') {
+            return (company.company_name || '').toLowerCase().indexOf(search) !== -1;
           }
           return true;
         });
@@ -184,127 +187,104 @@ export default {
       return filtered;
     }
   },
-  created() {
-    this.companies = this.companiesData.map(company => ({
-      ...company,
-      company_name: company.user ? company.user.name.toUpperCase() : '',
-      email: company.user ? company.user.email : '',
-      created_at_formatted: company.created_at
-        ? new Date(company.created_at).toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' })
-        : ''
-    }));
+  created: function() {
+    var self = this;
+    self.companies = self.companiesData.map(function(company) {
+      return Object.assign({}, company, {
+        company_name: company.user ? company.user.name.toUpperCase() : '',
+        email: company.user ? company.user.email : '',
+        created_at_formatted: company.created_at
+          ? new Date(company.created_at).toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' })
+          : ''
+      });
+    });
   },
   methods: {
-    handleCommand(command, row) {
-      const [action, id] = command.split('-');
-      switch (action) {
-        case 'edit':
-          window.location.href = `/companies/${row.identification_number}/production`;
-          break;
-        case 'documents':
-          window.location.href = `/company/${row.identification_number}`;
-          break;
-        case 'environment':
-          this.openChangeEnvironmentModal(row);
-          break;
-        case 'toggle':
-          this.toggleState(row);
-          break;
-        case 'delete':
-          this.deleteCompany(row);
-          break;
-      }
-    },
-    openChangeEnvironmentModal(row) {
+    openChangeEnvironmentModal: function(row) {
       this.selectedCompany = {
         id: row.id,
         nit: row.identification_number,
         environment: row.type_environment_id
       };
-      this.showEnvironmentModal = true;
+      window.jQuery('#changeEnvironmentModal').modal('show');
     },
-    saveEnvironment() {
-      this.saving = true;
-      this.$http.put(`/companies/${this.selectedCompany.id}/environment`, {
-        type_environment_id: this.selectedCompany.environment
+    saveEnvironment: function() {
+      var self = this;
+      self.saving = true;
+      self.$http.put('/companies/' + self.selectedCompany.id + '/environment', {
+        type_environment_id: self.selectedCompany.environment
       }, {
         headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
       })
-      .then(response => {
+      .then(function(response) {
         if (response.data.success) {
-          this.$message.success('Ambiente cambiado exitosamente');
-          this.showEnvironmentModal = false;
+          self.$message.success('Ambiente cambiado exitosamente');
+          window.jQuery('#changeEnvironmentModal').modal('hide');
           location.reload();
         } else {
-          this.$message.error(response.data.message || 'Error al cambiar ambiente');
+          self.$message.error(response.data.message || 'Error al cambiar ambiente');
         }
       })
-      .catch(() => {
-        this.$message.error('Error al cambiar ambiente');
+      .catch(function() {
+        self.$message.error('Error al cambiar ambiente');
       })
-      .finally(() => {
-        this.saving = false;
+      .finally(function() {
+        self.saving = false;
       });
     },
-    toggleState(row) {
-      const action = row.state ? 'deshabilitar' : 'habilitar';
-      this.$confirm(`¿Está seguro de ${action} esta empresa?`, 'Confirmar', {
+    toggleState: function(row) {
+      var self = this;
+      var action = row.state ? 'deshabilitar' : 'habilitar';
+      self.$confirm('¿Está seguro de ' + action + ' esta empresa?', 'Confirmar', {
         confirmButtonText: 'Aceptar',
         cancelButtonText: 'Cancelar',
         type: 'warning'
       })
-      .then(() => {
-        this.$http.put(`/companies/${row.id}/toggle-state`, {
+      .then(function() {
+        self.$http.put('/companies/' + row.id + '/toggle-state', {
           state: !row.state
         }, {
           headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
         })
-        .then(response => {
+        .then(function(response) {
           if (response.data.success) {
-            this.$message.success('Estado cambiado exitosamente');
+            self.$message.success('Estado cambiado exitosamente');
             location.reload();
           } else {
-            this.$message.error(response.data.message || 'Error al cambiar estado');
+            self.$message.error(response.data.message || 'Error al cambiar estado');
           }
         })
-        .catch(() => {
-          this.$message.error('Error al cambiar estado de la empresa');
+        .catch(function() {
+          self.$message.error('Error al cambiar estado de la empresa');
         });
       })
-      .catch(() => {});
+      .catch(function() {});
     },
-    deleteCompany(row) {
-      this.$confirm(`¿Está seguro de eliminar la empresa ${row.identification_number}? Esta acción no se puede deshacer.`, 'Eliminar Empresa', {
+    deleteCompany: function(row) {
+      var self = this;
+      self.$confirm('¿Está seguro de eliminar la empresa ' + row.identification_number + '? Esta acción no se puede deshacer.', 'Eliminar Empresa', {
         confirmButtonText: 'Eliminar',
         cancelButtonText: 'Cancelar',
         type: 'error'
       })
-      .then(() => {
-        this.$http.delete(`/companies/${row.id}`, {
+      .then(function() {
+        self.$http.delete('/companies/' + row.id, {
           headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
         })
-        .then(response => {
+        .then(function(response) {
           if (response.data.success) {
-            this.$message.success('Empresa eliminada exitosamente');
-            this.companies = this.companies.filter(c => c.id !== row.id);
+            self.$message.success('Empresa eliminada exitosamente');
+            self.companies = self.companies.filter(function(c) { return c.id !== row.id; });
           } else {
-            this.$message.error(response.data.message || 'Error al eliminar');
+            self.$message.error(response.data.message || 'Error al eliminar');
           }
         })
-        .catch(() => {
-          this.$message.error('Error al eliminar la empresa');
+        .catch(function() {
+          self.$message.error('Error al eliminar la empresa');
         });
       })
-      .catch(() => {});
+      .catch(function() {});
     }
   }
 };
 </script>
-
-<style scoped>
-.page-header h2 {
-  color: #2B323D;
-  font-weight: 600;
-  margin-bottom: 0;
-}
-</style>
