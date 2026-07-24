@@ -117,7 +117,6 @@
                                                 </svg>
                                             </span>
                                             <span class="ml-2">Usuarios</span>
-                                            <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                     <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.email.index', $row->id) }}')">
                                             <span class="dropdown-icon-left">
@@ -145,7 +144,6 @@
                                             </svg>
                                         </span>
                                         <span class="ml-2">Acceso a la App</span>
-                                        <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                     <el-dropdown-item divided></el-dropdown-item>
                                     <el-dropdown-item class="d-flex align-items-center">
@@ -162,7 +160,6 @@
                                             </svg>
                                         </span>
                                         <span class="ml-2">Almacenamiento S3</span>
-                                        <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
