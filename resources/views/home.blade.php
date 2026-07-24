@@ -1,5 +1,30 @@
 @extends('layouts.app')
 @section('content')
+
+<style>
+    .page-header { border-bottom: 1px solid #e9ecef; padding-bottom: 15px; margin-bottom: 20px; }
+    .page-header h2 { font-size: 22px; font-weight: 600; color: #2B323D; margin: 0; }
+    .search-card { border: 1px solid #e9ecef; border-radius: 8px; }
+    .search-card .form-control { border-radius: 6px; border-color: #dee2e6; }
+    .search-card .form-control:focus { border-color: #0088CC; box-shadow: 0 0 0 2px rgba(0,136,204,0.15); }
+    .table { margin-bottom: 0; }
+    .table thead th { background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-weight: 600; font-size: 12px; text-transform: uppercase; color: #6c757d; letter-spacing: 0.3px; padding: 10px 12px; vertical-align: middle; }
+    .table tbody td { padding: 10px 12px; vertical-align: middle; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+    .table tbody tr:hover { background-color: #f8f9fa; }
+    .badge-env { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-produccion { background-color: #28a745; color: #fff; }
+    .badge-habilitacion { background-color: #ffc107; color: #212529; }
+    .badge-activa { background-color: #28a745; color: #fff; }
+    .badge-inactiva { background-color: #dc3545; color: #fff; }
+    .badge-docs { background-color: #17a2b8; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+    .btn-acciones { border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 500; color: #495057; background: #fff; }
+    .btn-acciones:hover { background: #f8f9fa; border-color: #adb5bd; }
+    .dropdown-menu { border: 1px solid #e9ecef; box-shadow: 0 4px 16px rgba(0,0,0,0.1); border-radius: 8px; padding: 6px 0; }
+    .dropdown-item { padding: 7px 16px; font-size: 13px; }
+    .dropdown-item:hover { background-color: #f0f7ff; }
+    .dropdown-divider { margin: 4px 0; }
+</style>
+
 <header class="page-header d-flex justify-content-between align-items-center">
     <div>
         <h2>Listado de Empresas</h2>
@@ -83,7 +108,7 @@
                                     Acciones
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right" style="min-width: 200px;">
-                                    <a class="dropdown-item" href="{{ route('company.production.index', $row->identification_number) }}">
+                                    <a class="dropdown-item" href="{{ route('company.edit', $row->identification_number) }}">
                                         <i class="fas fa-edit text-primary mr-2"></i> Editar
                                     </a>
                                     <a class="dropdown-item" href="{{ route('company', $row->identification_number) }}">
