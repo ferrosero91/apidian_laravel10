@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         container.innerHTML = '<div class="col-12 text-center"><i class="fas fa-spinner fa-spin"></i> Cargando plantillas...</div>';
 
-        fetch('/api/ubl2.1/config/templates', {
+        fetch('/api/templates', {
             headers: {
                 'Authorization': 'Bearer ' + apiToken,
                 'Accept': 'application/json'
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.selectTemplate = function(templateId) {
-        fetch('/api/ubl2.1/config/templates', {
+        fetch('/api/templates', {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + apiToken,
