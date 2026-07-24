@@ -20,7 +20,7 @@
 </header>
 <div class="row">
 
-    {{-- <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
         <section class="card mb-4">
             <div class="card-body bg-secondary">
                 <div class="widget-summary">
@@ -43,9 +43,8 @@
                 </div>
             </div>
         </section>
-    </div> --}}
+    </div>
     
-    {{--
     <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
         <section class="card mb-4">
             <div class="card-body bg-secondary">
@@ -58,7 +57,7 @@
                     <div class="widget-summary-col">
                         <div class="summary">
                             <h4 class="title" style="word-break: normal;">Test API Swagger</h4>
-                            {{-- <div class="info">
+                            <div class="info">
                                 <strong class="amount">1281</strong>
                             </div>
                         </div>
@@ -70,9 +69,8 @@
             </div>
         </section>
     </div>
-    --}}
     
-    {{-- <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
         <section class="card mb-4">
             <div class="card-body bg-secondary">
                 <div class="widget-summary">
@@ -95,9 +93,8 @@
                 </div>
             </div>
         </section>
-    </div> --}}
+    </div>
    
-    {{--
     <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3">
         <section class="card mb-4">
             <div class="card-body bg-secondary">
@@ -122,7 +119,6 @@
             </div>
         </section>
     </div>
-    --}}
 
     @php
         // URL embebida para la documentación.

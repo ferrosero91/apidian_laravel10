@@ -19,7 +19,7 @@ $cust_id = $path[2];
                 <span class="text-muted sidebar-title-text-second">Menu</span>
             </span>
         </a>
-        <div class="sidebar-toggle d-none d-md-block" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle" style="display: none !important">
+        <div class="sidebar-toggle d-none d-md-block" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
             <i class="fas fa-bars" aria-label="Toggle sidebar"></i>
         </div>
     </div>
@@ -67,61 +67,38 @@ $cust_id = $path[2];
                     </li>
                     @endif
 
-
-                    {{-- @if(isset(Auth::user()->email))
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'' }}">
+                    @if(isset(Auth::user()->email))
+                        <li class="{{ ($path[0] === 'documents')?'nav-active':'' }}">
                             <a class="nav-link" href="{{route('documents_index')}}">
                                 <i class="fas fa-receipt" aria-hidden="true"></i>
                                 <span>Documentos</span>
                             </a>
                         </li>
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'' }}">
-                                <a class="nav-link" href="{{route('tax_index')}}">
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Impuestos</span>
-                                </a>
-                            </li>
-                        <li class="nav-parent {{ in_array($path[0], ['items_ecommerce', 'tags', 'promotions'])?'nav-active nav-expanded':'' }}">
+                        <li class="{{ ($path[0] === 'tax')?'nav-active':'' }}">
+                            <a class="nav-link" href="{{route('tax_index')}}">
+                                <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                                <span>Impuestos</span>
+                            </a>
+                        </li>
+                        <li class="nav-parent {{ in_array($path[0], ['configuration', 'configuration_admin'])?'nav-active nav-expanded':'' }}">
                             <a class="nav-link" href="#">
-                                <i class="fas fa-receipt" aria-hidden="true"></i>
+                                <i class="fas fa-building" aria-hidden="true"></i>
                                 <span>Empresa</span>
                             </a>
                             <ul class="nav nav-children">
-                                <li class="{{ ($path[0] === 'items_ecommerce')?'nav-active':'' }}">
+                                <li class="{{ ($path[0] === 'configuration')?'nav-active':'' }}">
                                     <a class="nav-link" href="{{route('configuration_index')}}">
                                         Lista
                                     </a>
                                 </li>
-                                <li class="{{ ($path[0] === 'tags')?'nav-active':'' }}">
+                                <li class="{{ ($path[0] === 'configuration_admin')?'nav-active':'' }}">
                                     <a class="nav-link" href="{{route('configuration_admin')}}">
                                         Nuevo
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                    @else
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'nav-active' }}">
-                            <form action="{{ url('/okcustomerlogin/'.$comp_id.'/'.$cust_id) }}" method="POST">
-                                @csrf
-                                <a class="nav-link" href="javascript:;" onclick="$('#action-button').click();">
-                                    <input type="hidden" name="verificar" value="FALSE"/>
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Documentos Recibidos</span>
-                                </a>
-                                <input type="submit" id="action-button" style="display: none;" >
-                            </form>
-                        </li>
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'nav-active' }}">
-                            <form action="{{ url('/customer-password/'.$comp_id.'/'.$cust_id) }}" method="GET">
-                                @csrf
-                                <a class="nav-link" href="javascript:;" onclick="$('#action-button2').click();">
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Cambiar Password Cliente</span>
-                                </a>
-                                <input type="submit" id="action-button2" style="display: none;" >
-                            </form>
-                        </li>
-                    @endif --}}
+                    @endif
                 </ul>
             </nav>
         </div>
