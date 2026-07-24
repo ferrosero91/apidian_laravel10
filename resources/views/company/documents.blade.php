@@ -2,35 +2,37 @@
     .page-header { border-bottom: 1px solid #e9ecef; padding-bottom: 15px; margin-bottom: 20px; }
     .page-header h2 { font-size: 22px; font-weight: 600; color: #2B323D; margin: 0; }
     .page-header .text-muted { font-size: 13px; }
-    .doc-card { border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; }
+    .doc-card { border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .doc-table { margin-bottom: 0; }
-    .doc-table thead th { background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #6c757d; letter-spacing: 0.3px; padding: 10px 10px; vertical-align: middle; white-space: nowrap; }
+    .doc-table thead th { background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #6c757d; letter-spacing: 0.5px; padding: 10px 10px; vertical-align: middle; white-space: nowrap; }
     .doc-table tbody td { padding: 8px 10px; vertical-align: middle; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
     .doc-table tbody tr:hover { background-color: #f8f9fa; }
     .doc-table .text-right { text-align: right; }
-    .btn-xs { padding: 3px 8px; font-size: 11px; border-radius: 4px; font-weight: 500; }
-    .btn-dian { background-color: #6c757d; border-color: #6c757d; color: #fff; }
-    .btn-dian:hover { background-color: #5a6268; border-color: #545b62; color: #fff; }
-    .btn-cufe { background-color: #007bff; border-color: #007bff; color: #fff; }
-    .btn-cufe:hover { background-color: #0069d9; border-color: #0062cc; color: #fff; }
-    .btn-xml { background-color: #28a745; border-color: #28a745; color: #fff; }
-    .btn-xml:hover { background-color: #218838; border-color: #1e7e34; color: #fff; }
-    .btn-pdf { background-color: #dc3545; border-color: #dc3545; color: #fff; }
-    .btn-pdf:hover { background-color: #c82333; border-color: #bd2130; color: #fff; }
-    .btn-nota { background-color: #17a2b8; border-color: #17a2b8; color: #fff; }
-    .btn-nota:hover { background-color: #138496; border-color: #117a8b; color: #fff; }
-    .badge-val { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-dian { background-color: #6c757d; color: #fff; }
+    .btn-dian:hover { background-color: #5a6268; color: #fff; }
+    .btn-cufe { background-color: #007bff; color: #fff; }
+    .btn-cufe:hover { background-color: #0069d9; color: #fff; }
+    .btn-xml { background-color: #28a745; color: #fff; }
+    .btn-xml:hover { background-color: #218838; color: #fff; }
+    .btn-pdf { background-color: #dc3545; color: #fff; }
+    .btn-pdf:hover { background-color: #c82333; color: #fff; }
+    .btn-nota { background-color: #17a2b8; color: #fff; }
+    .btn-nota:hover { background-color: #138496; color: #fff; }
+    .btn-resend { background-color: #fd7e14; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+    .btn-resend:hover { background-color: #e8590c; color: #fff; }
+    .badge-val { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
     .badge-val-si { background-color: #28a745; color: #fff; }
     .badge-val-no { background-color: #dc3545; color: #fff; }
-    .badge-amb { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-amb { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
     .badge-amb-prod { background-color: #28a745; color: #fff; }
     .badge-amb-hab { background-color: #ffc107; color: #212529; }
     .client-name { font-weight: 600; color: #2B323D; }
     .client-doc { font-size: 12px; color: #6c757d; }
-    .doc-number { font-weight: 600; color: #2B323D; font-family: monospace; font-size: 13px; }
-    .doc-actions-cell { white-space: nowrap; }
-    .doc-actions-cell .btn { margin: 1px 0; }
+    .doc-number { font-weight: 700; color: #2B323D; font-family: 'Courier New', monospace; font-size: 13px; }
     .pagination { margin: 0; }
+    .card-footer { background: #f8f9fa; border-top: 1px solid #e9ecef; }
+    pre#modalBodyContent, pre#modalBodyResponse { background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 12px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
 </style>
 
 <header class="page-header d-flex justify-content-between align-items-center">
@@ -194,6 +196,15 @@
                                         Nota de crédito
                                     </button>
                                 @endif
+                            @endif
+                            @if(!$row->state_document_id && $row->response_dian)
+                                <button type="button" class="btn btn-xs btn-resend mt-1"
+                                    data-id="{{ $row->id }}"
+                                    data-cufe="{{ $row->cufe }}"
+                                    data-prefix="{{ $row->prefix }}"
+                                    data-number="{{ $row->number }}">
+                                    <i class="fas fa-redo"></i> Reenviar
+                                </button>
                             @endif
                         </td>
                     </tr>
@@ -374,6 +385,10 @@
     </div>
 </div> --}}
 
+
+@include('company.modals', [
+    'resolution_credit_notes' => $resolution_credit_notes ?? null
+])
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -690,6 +705,69 @@ $(document).ready(function() {
         var id = $(this).data('id');
         $('#verificarInput').val(id);
         $('#changeStateModal').modal('show');
+    });
+
+    // Reenviar documento rechazado
+    $(document).off('click', '.btn-resend');
+    $(document).on('click', '.btn-resend', function() {
+        var $btn = $(this);
+        var docId = $btn.data('id');
+        var prefix = $btn.data('prefix');
+        var number = $btn.data('number');
+
+        if (!confirm('¿Desea reenviar el documento ' + prefix + number + ' a la DIAN?')) return;
+
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Enviando...');
+
+        // Buscar el request_api del documento en la tabla
+        var $row = $btn.closest('tr');
+        var requestData = null;
+
+        // Intentar obtener el request_api del atributo data del boton de nota de credito
+        var $creditBtn = $row.find('.btn-credit-note');
+        if ($creditBtn.length) {
+            try {
+                requestData = $creditBtn.data('request-api');
+            } catch(e) {}
+        }
+
+        if (!requestData) {
+            // Si no hay request_api, intentar desde la respuesta DIAN
+            var $dianBtn = $row.find('.modalApiResponse');
+            if ($dianBtn.length) {
+                try {
+                    var respContent = $dianBtn.data('content');
+                    if (typeof respContent === 'string') respContent = JSON.parse(respContent);
+                } catch(e) {}
+            }
+        }
+
+        $.ajax({
+            url: '/api/ubl2.1/senddocument',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + '{{ $company->user->api_token }}',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            data: JSON.stringify({
+                document_id: docId
+            }),
+            success: function(response) {
+                if (response.success) {
+                    new PNotify({ text: response.message || 'Documento reenviado exitosamente', type: 'success', addclass: 'notification-success', delay: 3000 });
+                    setTimeout(function() { location.reload(); }, 1500);
+                } else {
+                    new PNotify({ text: response.message || 'Error al reenviar', type: 'error', addclass: 'notification-danger', delay: 5000 });
+                    $btn.prop('disabled', false).html('<i class="fas fa-redo"></i> Reenviar');
+                }
+            },
+            error: function(xhr) {
+                var msg = xhr.responseJSON?.message || 'Error al reenviar el documento';
+                new PNotify({ text: msg, type: 'error', addclass: 'notification-danger', delay: 5000 });
+                $btn.prop('disabled', false).html('<i class="fas fa-redo"></i> Reenviar');
+            }
+        });
     });
 
     // Variable global para almacenar los datos del documento actual
