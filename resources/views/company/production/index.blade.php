@@ -380,9 +380,9 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>
         </li>
         <li class="nav-item d-flex" role="presentation">
-            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold disabled"
-                id="payroll-tab" type="button" role="tab"
-                aria-controls="payroll" aria-selected="false" disabled>
+            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                id="payroll-tab" data-bs-toggle="tab" data-bs-target="#payroll" type="button" role="tab"
+                aria-controls="payroll" aria-selected="false">
                 <img src="{{ asset('production/nomina-electronica-icon.svg') }}" alt="Nómina electrónica" class="tab-icon me-2">
                 Nómina electrónica
             </button>
@@ -404,9 +404,9 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>
         </li>
         <li class="nav-item d-flex" role="presentation">
-            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold disabled"
-                id="pos-tab" type="button" role="tab"
-                aria-controls="pos" aria-selected="false" disabled>
+            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                id="pos-tab" data-bs-toggle="tab" data-bs-target="#pos" type="button" role="tab"
+                aria-controls="pos" aria-selected="false">
                 <img src="{{ asset('production/documentos-equivalentes-icon.svg') }}" alt="Documentos equivalentes" class="tab-icon me-2">
                 Documentos equivalentes
             </button>
@@ -598,6 +598,108 @@ document.addEventListener('DOMContentLoaded', function() {
                     @include('company.production.event.index', [
                         'company' => $company,
                         'environmentStatus' => $environmentStatuses['event']
+                    ])
+                </div>
+            </div>
+        </div>
+
+        <!-- Nómina Electrónica -->
+        <div class="tab-pane fade mt-2" id="payroll" role="tabpanel" aria-labelledby="payroll-tab">
+            <header class="page-header d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
+                    <br>
+                    <span class="text-muted">Nómina Electrónica</span>
+                </div>
+                <div class="mt-auto pb-1">
+                    <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i> Volver
+                    </a>
+                </div>
+            </header>
+            <ul class="nav nav-tabs nav-justified mb-0 sub-tabs" id="payrollSubTabs" role="tablist" style="background: #fff;">
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold active"
+                        id="payroll-list-tab" data-bs-toggle="tab" data-bs-target="#payroll-list" type="button" role="tab"
+                        aria-controls="payroll-list" aria-selected="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l11 0" /><path d="M9 12l11 0" /><path d="M9 18l11 0" /><path d="M5 6l0 .01" /><path d="M5 12l0 .01" /><path d="M5 18l0 .01" /></svg>
+                        Listado
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="payroll-production-tab" data-bs-toggle="tab" data-bs-target="#payroll-production" type="button" role="tab"
+                        aria-controls="payroll-production" aria-selected="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.003 21c-.732 .001 -1.465 -.438 -1.678 -1.317a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c.886 .215 1.325 .957 1.318 1.694" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M19.001 15.5v1.5" /><path d="M19.001 21v1.5" /><path d="M22.032 17.25l-1.299 .75" /><path d="M17.27 20l-1.3 .75" /><path d="M15.97 17.25l1.3 .75" /><path d="M20.733 20l1.3 .75" /></svg>
+                        Paso a Producción
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="payrollSubTabsContent">
+                <div class="tab-pane fade show active" id="payroll-list" role="tabpanel" aria-labelledby="payroll-list-tab">
+                    <div class="p-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>Nómina Electrónica</strong> - La nómina electrónica está habilitada. Configure el software y resoluciones en la pestaña "Paso a Producción".
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="payroll-production" role="tabpanel" aria-labelledby="payroll-production-tab">
+                    @include('company.production.invoice.index', [
+                        'company' => $company,
+                        'environmentStatus' => $environmentStatuses['invoice'],
+                        'typeDocuments' => $typeDocuments
+                    ])
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentos Equivalentes -->
+        <div class="tab-pane fade mt-2" id="pos" role="tabpanel" aria-labelledby="pos-tab">
+            <header class="page-header d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
+                    <br>
+                    <span class="text-muted">Documentos Equivalentes</span>
+                </div>
+                <div class="mt-auto pb-1">
+                    <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i> Volver
+                    </a>
+                </div>
+            </header>
+            <ul class="nav nav-tabs nav-justified mb-0 sub-tabs" id="posSubTabs" role="tablist" style="background: #fff;">
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold active"
+                        id="pos-list-tab" data-bs-toggle="tab" data-bs-target="#pos-list" type="button" role="tab"
+                        aria-controls="pos-list" aria-selected="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l11 0" /><path d="M9 12l11 0" /><path d="M9 18l11 0" /><path d="M5 6l0 .01" /><path d="M5 12l0 .01" /><path d="M5 18l0 .01" /></svg>
+                        Listado
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="pos-production-tab" data-bs-toggle="tab" data-bs-target="#pos-production" type="button" role="tab"
+                        aria-controls="pos-production" aria-selected="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.003 21c-.732 .001 -1.465 -.438 -1.678 -1.317a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c.886 .215 1.325 .957 1.318 1.694" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M19.001 15.5v1.5" /><path d="M19.001 21v1.5" /><path d="M22.032 17.25l-1.299 .75" /><path d="M17.27 20l-1.3 .75" /><path d="M15.97 17.25l1.3 .75" /><path d="M20.733 20l1.3 .75" /></svg>
+                        Paso a Producción
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="posSubTabsContent">
+                <div class="tab-pane fade show active" id="pos-list" role="tabpanel" aria-labelledby="pos-list-tab">
+                    <div class="p-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>Documentos Equivalentes</strong> - Los documentos equivalentes están habilitados. Configure el software y resoluciones en la pestaña "Paso a Producción".
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="pos-production" role="tabpanel" aria-labelledby="pos-production-tab">
+                    @include('company.production.pos.index', [
+                        'company' => $company,
+                        'environmentStatus' => $environmentStatuses['invoice'],
+                        'typeDocuments' => $typeDocuments
                     ])
                 </div>
             </div>

@@ -382,16 +382,7 @@ class ProductionController extends Controller
             $testSetId = trim($request->input('test_set_id'));
             $zipkey = $request->input('zipkey');
             $type = $request->input('type', 'invoice');
-            // Nomina y Documentos equivalentes (POS) no disponibles en la version Community.
-            if ($type === 'pos' || $type === 'payroll') {
-                return response()->json(['error' => 'Nomina y Documentos equivalentes no disponibles en esta version.']);
-            }
-            // \Log::info('Paso a producción iniciado', [
-            //     'step' => $step,
-            //     'testSetId' => $testSetId,
-            //     'zipkey' => $zipkey,
-            //     'company' => $company
-            // ]);
+            // Nomina y Documentos equivalentes (POS) habilitados
             $company = Company::with('software', 'user')->where('identification_number', $company)->first();
             if (!$company) {
                 // \Log::error('Empresa no encontrada', ['company' => $company]);
