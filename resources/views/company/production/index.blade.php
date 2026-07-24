@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Factura Electrónica</span>
+                    <span class="text-muted">Factura Electrónica - Ambiente: {{ ($environmentStatuses['invoice']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -620,7 +620,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Documento Soporte</span>
+                    <span class="text-muted">Documento Soporte - Ambiente: {{ ($environmentStatuses['support']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -705,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Eventos RADIAN</span>
+                    <span class="text-muted">Eventos RADIAN - Ambiente: {{ ($environmentStatuses['event']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -755,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Nómina Electrónica</span>
+                    <span class="text-muted">Nómina Electrónica - Ambiente: {{ ($environmentStatuses['payroll']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -780,21 +780,40 @@ document.addEventListener('DOMContentLoaded', function() {
                         Paso a Producción
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="payroll-resolutions-tab" data-bs-toggle="tab" data-bs-target="#payroll-resolutions" type="button" role="tab"
+                        aria-controls="payroll-resolutions" aria-selected="false">
+                        <i class="fas fa-file-invoice me-2"></i>
+                        Resoluciones
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="payrollSubTabsContent">
                 <div class="tab-pane fade show active" id="payroll-list" role="tabpanel" aria-labelledby="payroll-list-tab">
-                    <div class="p-3">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            <strong>Nómina Electrónica</strong> - La nómina electrónica está habilitada. Configure el software y resoluciones en la pestaña "Paso a Producción".
-                        </div>
-                    </div>
+                    @include('company.documents', [
+                        'documents' => $payrollData['documents'] ?? collect(),
+                        'resolution_credit_notes' => collect(),
+                        'company' => $company,
+                        'company_idnumber' => $company->identification_number,
+                        'token_company' => $company->user->api_token ?? null,
+                        'type' => 'payroll'
+                    ])
                 </div>
                 <div class="tab-pane fade" id="payroll-production" role="tabpanel" aria-labelledby="payroll-production-tab">
                     @include('company.production.invoice.index', [
                         'company' => $company,
-                        'environmentStatus' => $environmentStatuses['invoice'],
+                        'environmentStatus' => $environmentStatuses['payroll'],
                         'typeDocuments' => $typeDocuments
+                    ])
+                </div>
+                <div class="tab-pane fade" id="payroll-resolutions" role="tabpanel" aria-labelledby="payroll-resolutions-tab">
+                    @include('company.production._resolutions_tab', [
+                        'company' => $company,
+                        'type' => 'payroll',
+                        'resolutionsHab' => $payrollData['resolutionsHab'] ?? collect(),
+                        'resolutionsProd' => $payrollData['resolutionsProd'] ?? collect(),
+                        'resolutionTypeDocuments' => $payrollData['resolutionTypeDocuments'] ?? collect(),
                     ])
                 </div>
             </div>
@@ -806,7 +825,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Documentos Equivalentes</span>
+                    <span class="text-muted">Documentos Equivalentes - Ambiente: {{ ($environmentStatuses['pos']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -831,23 +850,44 @@ document.addEventListener('DOMContentLoaded', function() {
                         Paso a Producción
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="pos-resolutions-tab" data-bs-toggle="tab" data-bs-target="#pos-resolutions" type="button" role="tab"
+                        aria-controls="pos-resolutions" aria-selected="false">
+                        <i class="fas fa-file-invoice me-2"></i>
+                        Resoluciones
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="posSubTabsContent">
                 <div class="tab-pane fade show active" id="pos-list" role="tabpanel" aria-labelledby="pos-list-tab">
-                    <div class="p-3">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            <strong>Documentos Equivalentes</strong> - Los documentos equivalentes están habilitados. Configure el software y resoluciones en la pestaña "Paso a Producción".
-                        </div>
-                    </div>
+                    @include('company.documents', [
+                        'documents' => $posData['documents'] ?? collect(),
+                        'resolution_credit_notes' => collect(),
+                        'company' => $company,
+                        'company_idnumber' => $company->identification_number,
+                        'token_company' => $company->user->api_token ?? null,
+                        'type' => 'pos'
+                    ])
                 </div>
                 <div class="tab-pane fade" id="pos-production" role="tabpanel" aria-labelledby="pos-production-tab">
                     @include('company.production.pos.index', [
                         'company' => $company,
-                        'environmentStatus' => $environmentStatuses['invoice'],
+                        'environmentStatus' => $environmentStatuses['pos'],
                         'typeDocuments' => $typeDocuments
                     ])
                 </div>
+                <div class="tab-pane fade" id="pos-resolutions" role="tabpanel" aria-labelledby="pos-resolutions-tab">
+                    @include('company.production._resolutions_tab', [
+                        'company' => $company,
+                        'type' => 'pos',
+                        'resolutionsHab' => $posData['resolutionsHab'] ?? collect(),
+                        'resolutionsProd' => $posData['resolutionsProd'] ?? collect(),
+                        'resolutionTypeDocuments' => $posData['resolutionTypeDocuments'] ?? collect(),
+                    ])
+                </div>
+            </div>
+        </div>
             </div>
         </div>
 
