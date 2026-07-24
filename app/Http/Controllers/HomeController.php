@@ -47,7 +47,7 @@ class HomeController extends Controller
             });
         }
 
-        $companies = $companiesQuery->get()->transform(function ($row) {
+        $companies = $companiesQuery->with('user')->get()->transform(function ($row) {
             $documents = Document::where('identification_number', $row->identification_number)->count();
             $row->total_documents = $documents;
             return $row;
