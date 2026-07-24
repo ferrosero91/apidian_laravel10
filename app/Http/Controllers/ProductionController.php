@@ -266,6 +266,10 @@ class ProductionController extends Controller
                 $software->identifier_support_document = $request->id;
                 $software->pin_support_document = $request->pin;
                 break;
+            case 'pos':
+                $software->identifier_eqdocs = $request->id;
+                $software->pin_eqdocs = $request->pin;
+                break;
             default:
                 return back()->with('error', 'Tipo de documento no válido.');
         }
@@ -289,6 +293,9 @@ class ProductionController extends Controller
                 break;
             case 'event':
                 $environmentId = $company->event_type_environment_id ?? 2;
+                break;
+            case 'pos':
+                $environmentId = $company->eqdocs_type_environment_id ?? 2;
                 break;
         }
 
@@ -314,6 +321,16 @@ class ProductionController extends Controller
                             'identifier' => $company->software->identifier_support_document,
                             'pin' => $company->software->pin_support_document,
                             'name' => $company->software->name ?? 'Software DIAN Documentos Soporte'
+                        ];
+                    }
+                    break;
+                case 'pos':
+                    if ($company->software->identifier_eqdocs && $company->software->pin_eqdocs) {
+                        $hasSoftware = true;
+                        $softwareInfo = [
+                            'identifier' => $company->software->identifier_eqdocs,
+                            'pin' => $company->software->pin_eqdocs,
+                            'name' => $company->software->name ?? 'Software DIAN Doc. Equivalentes'
                         ];
                     }
                     break;
@@ -360,6 +377,15 @@ class ProductionController extends Controller
                 $company->event_type_environment_id = $environmentId;
                 if ($company->software) {
                     $company->software->url_event = ($environmentId == 1)
+                        ? 'https://vpfe.dian.gov.co/WcfDianCustomerServices.svc'
+                        : 'https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc';
+                    $company->software->save();
+                }
+                break;
+            case 'pos':
+                $company->eqdocs_type_environment_id = $environmentId;
+                if ($company->software) {
+                    $company->software->url_eqdocs = ($environmentId == 1)
                         ? 'https://vpfe.dian.gov.co/WcfDianCustomerServices.svc'
                         : 'https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc';
                     $company->software->save();
