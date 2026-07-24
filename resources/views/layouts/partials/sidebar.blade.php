@@ -19,9 +19,6 @@ $cust_id = $path[2];
                 <span class="text-muted sidebar-title-text-second">Menu</span>
             </span>
         </a>
-        <div class="sidebar-toggle d-none d-md-block" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
-            <i class="fas fa-bars" aria-label="Toggle sidebar"></i>
-        </div>
     </div>
     <div class="nano">
         <div class="nano-content">
