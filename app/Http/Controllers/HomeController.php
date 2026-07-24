@@ -326,7 +326,7 @@ class HomeController extends Controller
     {
         try {
             $dbName = config('database.connections.mysql.database');
-            $result = \DB::select("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size FROM information_schema.tables WHERE table_schema = '{$dbName}'");
+            $result = \DB::select("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size FROM information_schema.tables WHERE table_schema = ?", [$dbName]);
             return ($result[0]->size ?? 0) . ' MB';
         } catch (\Exception $e) {
             return 'N/A';
@@ -336,9 +336,15 @@ class HomeController extends Controller
     private function getStorageUsage()
     {
         try {
-            $bytes = \File::size(storage_path());
-            $mb = round($bytes / 1024 / 1024, 2);
-            return $mb . ' MB';
+            $bytes = 0;
+            $path = storage_path('app');
+            if (\File::isDirectory($path)) {
+                $files = \File::allFiles($path);
+                foreach ($files as $file) {
+                    $bytes += $file->getSize();
+                }
+            }
+            return round($bytes / 1024 / 1024, 2) . ' MB';
         } catch (\Exception $e) {
             return 'N/A';
         }
@@ -356,11 +362,13 @@ class HomeController extends Controller
         if (\File::isDirectory($backupPath)) {
             $files = \File::files($backupPath);
             foreach ($files as $file) {
-                $backups[] = [
-                    'name' => $file->getFilename(),
-                    'size' => round($file->getSize() / 1024 / 1024, 2) . ' MB',
-                    'date' => \Carbon\Carbon::createFromTimestamp($file->getMTime())->format('Y-m-d H:i:s'),
-                ];
+                if (pathinfo($file->getFilename(), PATHINFO_EXTENSION) === 'sql') {
+                    $backups[] = [
+                        'name' => $file->getFilename(),
+                        'size' => round($file->getSize() / 1024 / 1024, 2) . ' MB',
+                        'date' => \Carbon\Carbon::createFromTimestamp($file->getMTime())->format('Y-m-d H:i:s'),
+                    ];
+                }
             }
         }
 
@@ -380,28 +388,90 @@ class HomeController extends Controller
             }
 
             $filename = 'backup_' . date('Y-m-d_H-i-s') . '.sql';
-            $dbHost = config('database.connections.mysql.host');
             $dbName = config('database.connections.mysql.database');
+            $dbHost = config('database.connections.mysql.host');
             $dbUser = config('database.connections.mysql.username');
             $dbPass = config('database.connections.mysql.password');
 
-            $command = "mysqldump -h {$dbHost} -u {$dbUser} -p'{$dbPass}' {$dbName} > {$backupPath}/{$filename}";
+            // Try mysqldump first
+            $command = "mysqldump -h {$dbHost} -u {$dbUser} -p'{$dbPass}' {$dbName} 2>&1";
+            $output = [];
+            $returnVar = 0;
             exec($command, $output, $returnVar);
 
-            if ($returnVar === 0) {
+            if ($returnVar === 0 && !empty($output)) {
+                $sqlContent = implode("\n", $output);
+                \File::put($backupPath . '/' . $filename, $sqlContent);
                 return response()->json(['success' => true, 'message' => 'Backup creado exitosamente.']);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Error al crear backup.'], 500);
             }
+
+            // Fallback: use PHP to dump tables
+            return $this->createPhpBackup($backupPath, $filename, $dbName);
+
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    private function createPhpBackup($backupPath, $filename, $dbName)
+    {
+        try {
+            $sql = "-- APIDIAN Database Backup\n";
+            $sql .= "-- Date: " . date('Y-m-d H:i:s') . "\n";
+            $sql .= "-- Database: {$dbName}\n\n";
+            $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+
+            // Get all tables
+            $tables = \DB::select("SHOW TABLES");
+            $tableKey = "Tables_in_{$dbName}";
+
+            foreach ($tables as $table) {
+                $tableName = $table->$tableKey;
+                $sql .= "-- Table: {$tableName}\n";
+                $sql .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
+
+                // Get CREATE TABLE statement
+                $createTable = \DB::select("SHOW CREATE TABLE `{$tableName}`");
+                if (isset($createTable[0]->{'Create Table'})) {
+                    $sql .= $createTable[0]->{'Create Table'} . ";\n\n";
+                }
+
+                // Get data
+                $rows = \DB::select("SELECT * FROM `{$tableName}`");
+                if (!empty($rows)) {
+                    $columns = array_keys((array) $rows[0]);
+                    $sql .= "INSERT INTO `{$tableName}` (`" . implode('`, `', $columns) . "`) VALUES\n";
+
+                    $values = [];
+                    foreach ($rows as $row) {
+                        $rowValues = [];
+                        foreach ((array) $row as $value) {
+                            if ($value === null) {
+                                $rowValues[] = 'NULL';
+                            } else {
+                                $rowValues[] = "'" . addslashes($value) . "'";
+                            }
+                        }
+                        $values[] = '(' . implode(', ', $rowValues) . ')';
+                    }
+                    $sql .= implode(",\n", $values) . ";\n\n";
+                }
+            }
+
+            $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
+
+            \File::put($backupPath . '/' . $filename, $sql);
+
+            return response()->json(['success' => true, 'message' => 'Backup creado exitosamente.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al crear backup: ' . $e->getMessage()], 500);
         }
     }
 
     public function backupDownload($file)
     {
         $path = storage_path('app/backups/' . $file);
-        if (\File::exists($path)) {
+        if (\File::exists($path) && pathinfo($file, PATHINFO_EXTENSION) === 'sql') {
             return response()->download($path);
         }
         abort(404);
@@ -411,7 +481,7 @@ class HomeController extends Controller
     {
         try {
             $path = storage_path('app/backups/' . $file);
-            if (\File::exists($path)) {
+            if (\File::exists($path) && pathinfo($file, PATHINFO_EXTENSION) === 'sql') {
                 \File::delete($path);
                 return response()->json(['success' => true, 'message' => 'Backup eliminado.']);
             }
