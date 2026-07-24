@@ -457,6 +457,22 @@ document.addEventListener('DOMContentLoaded', function() {
             loadTemplates('support-template-gallery');
         });
     }
+
+    // Load templates for payroll tab
+    var payrollTemplateTab = document.getElementById('payroll-template-tab');
+    if (payrollTemplateTab) {
+        payrollTemplateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates('payroll-template-gallery');
+        });
+    }
+
+    // Load templates for POS tab
+    var posTemplateTab = document.getElementById('pos-template-tab');
+    if (posTemplateTab) {
+        posTemplateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates('pos-template-gallery');
+        });
+    }
 });
 </script>
 @endpush
@@ -788,6 +804,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         Resoluciones
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="payroll-template-tab" data-bs-toggle="tab" data-bs-target="#payroll-template" type="button" role="tab"
+                        aria-controls="payroll-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="payrollSubTabsContent">
                 <div class="tab-pane fade show active" id="payroll-list" role="tabpanel" aria-labelledby="payroll-list-tab">
@@ -815,6 +839,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         'resolutionsProd' => $payrollData['resolutionsProd'] ?? collect(),
                         'resolutionTypeDocuments' => $payrollData['resolutionTypeDocuments'] ?? collect(),
                     ])
+                </div>
+                <div class="tab-pane fade" id="payroll-template" role="tabpanel" aria-labelledby="payroll-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Nómina Electrónica para esta empresa.</p>
+                        <div class="row" id="payroll-template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -858,6 +891,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         Resoluciones
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="pos-template-tab" data-bs-toggle="tab" data-bs-target="#pos-template" type="button" role="tab"
+                        aria-controls="pos-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="posSubTabsContent">
                 <div class="tab-pane fade show active" id="pos-list" role="tabpanel" aria-labelledby="pos-list-tab">
@@ -885,6 +926,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         'resolutionsProd' => $posData['resolutionsProd'] ?? collect(),
                         'resolutionTypeDocuments' => $posData['resolutionTypeDocuments'] ?? collect(),
                     ])
+                </div>
+                <div class="tab-pane fade" id="pos-template" role="tabpanel" aria-labelledby="pos-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Documentos Equivalentes para esta empresa.</p>
+                        <div class="row" id="pos-template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
