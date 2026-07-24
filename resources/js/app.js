@@ -39,6 +39,8 @@ Vue.component('data-form', require('./components/DataForm.vue').default);
 Vue.component('companies-index', require('./views/companies/index.vue').default);
 Vue.component('company-documents', require('./views/companies/documents.vue').default);
 Vue.component('company-resolutions', require('./views/companies/resolutions.vue').default);
+Vue.component('resolutions-tab', require('./views/companies/resolutions-tab.vue').default);
+Vue.component('events-table', require('./views/companies/events-table.vue').default);
 
 // Customer components
 Vue.component('customers-index', require('./views/customers/index.vue').default);
