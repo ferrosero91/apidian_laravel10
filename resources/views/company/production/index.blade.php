@@ -356,6 +356,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var container = document.getElementById(containerId || 'template-gallery');
         if (!container) return;
 
+        container.innerHTML = '<div class="col-12 text-center"><i class="fas fa-spinner fa-spin"></i> Cargando plantillas...</div>';
+
         fetch('/api/ubl2.1/config/templates', {
             headers: {
                 'Authorization': 'Bearer ' + apiToken,
@@ -364,15 +366,17 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(function(response) { return response.json(); })
         .then(function(data) {
-            if (data.templates) {
+            if (data.templates && data.templates.length > 0) {
                 var html = '';
                 data.templates.forEach(function(template) {
                     var isCurrent = template.id == currentTemplate;
                     html += '<div class="col-md-3 col-sm-6 mb-4">';
                     html += '  <div class="card ' + (isCurrent ? 'border-primary' : '') + '" style="cursor:pointer;" onclick="selectTemplate(' + template.id + ')">';
-                    html += '    <img src="' + template.image_url + '" class="card-img-top" alt="Plantilla ' + template.id + '" onerror="this.src=\'/img/no-preview.png\'">';
+                    html += '    <div style="height:200px;overflow:hidden;background:#f8f9fa;display:flex;align-items:center;justify-content:center;">';
+                    html += '      <img src="' + template.image_url + '" style="max-width:100%;max-height:100%;object-fit:contain;" alt="Plantilla ' + template.id + '" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div style=\\\'padding:20px;text-align:center;color:#666\\\'>Vista previa no disponible</div>\'">';
+                    html += '    </div>';
                     html += '    <div class="card-body text-center p-2">';
-                    html += '      <h6 class="card-title mb-0">Plantilla ' + template.id + '</h6>';
+                    html += '      <h6 class="card-title mb-1">Plantilla ' + template.id + '</h6>';
                     if (isCurrent) {
                         html += '      <span class="badge badge-primary">Actual</span>';
                     }
@@ -387,10 +391,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (supportContainer && containerId !== 'support-template-gallery') {
                     supportContainer.innerHTML = html;
                 }
+            } else {
+                container.innerHTML = '<div class="col-12"><div class="alert alert-warning">No se encontraron plantillas disponibles</div></div>';
             }
         })
         .catch(function(error) {
-            container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar plantillas</div></div>';
+            console.error('Error loading templates:', error);
+            container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar plantillas: ' + error.message + '</div></div>';
         });
     }
 
@@ -408,7 +415,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(data) {
             if (data.success) {
                 currentTemplate = templateId;
-                loadTemplates();
+                loadTemplates('template-gallery');
+                loadTemplates('support-template-gallery');
                 new PNotify({
                     text: 'Plantilla actualizada correctamente',
                     type: 'success',
@@ -431,7 +439,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // Load templates when the tab is shown
+    // Load templates immediately for the invoice tab
+    loadTemplates('template-gallery');
+
+    // Load templates when tabs are shown
     var templateTab = document.getElementById('invoice-template-tab');
     if (templateTab) {
         templateTab.addEventListener('shown.bs.tab', function() {
