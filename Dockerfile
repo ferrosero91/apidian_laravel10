@@ -68,6 +68,12 @@ RUN rm -f /usr/local/etc/php-fpm.d/www.conf \
     && echo "pm.max_spare_servers = 10" >> /usr/local/etc/php-fpm.d/www.conf \
     && echo "pm.max_requests = 500" >> /usr/local/etc/php-fpm.d/www.conf
 
+# Instalar dependencias Node.js y compilar assets
+RUN npm install --legacy-peer-deps && npm run production
+
+# Limpiar node_modules después del build para reducir tamaño
+RUN rm -rf node_modules
+
 # Directorios necesarios
 RUN mkdir -p /var/log/nginx /run/nginx
 
