@@ -63,6 +63,20 @@ Route::middleware(['auth:api', 'storage.context'])->group(function () {
     Route::get('/templates', 'Api\ConfigurationController@getTemplates');
     Route::put('/templates', 'Api\ConfigurationController@updateTemplate');
 
+    // Payroll (Nómina Electrónica)
+    Route::prefix('/payroll')->group(function () {
+        Route::post('/{testSetId?}', 'Api\PayrollController@store');
+    });
+    Route::prefix('/payroll-adjust-note')->group(function () {
+        Route::post('/{testSetId?}', 'Api\PayrollController@adjustNote');
+    });
+
+    // RIPS (Registro Individual de Prestación de Servicios de Salud)
+    Route::prefix('/rips')->group(function () {
+        Route::post('/generate', 'Api\RipsController@generate');
+        Route::get('/config', 'Api\RipsController@config');
+    });
+
     Route::post('process-seller-document-reception', 'Api\RadianEventController@processSellerDocumentReception');
 
     // Load document data from DIAN by CUFE without sending event
