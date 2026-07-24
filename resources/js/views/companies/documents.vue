@@ -363,8 +363,8 @@ export default {
       if (!response) return false;
       try {
         const decoded = typeof response === 'string' ? JSON.parse(response) : response;
-        return decoded?.Envelope?.Body?.SendBillSyncResponse?.SendBillSyncResult?.IsValid === 'true';
-      } catch {
+        return decoded && decoded.Envelope && decoded.Envelope.Body && decoded.Envelope.Body.SendBillSyncResponse && decoded.Envelope.Body.SendBillSyncResponse.SendBillSyncResult && decoded.Envelope.Body.SendBillSyncResponse.SendBillSyncResult.IsValid === 'true';
+      } catch (e) {
         return false;
       }
     },
@@ -520,14 +520,15 @@ export default {
         });
       })
       .then(response => {
-        const statusCode = response.data?.ResponseDian?.Envelope?.Body?.SendBillSyncResponse?.SendBillSyncResult?.StatusCode;
+        const dianResult = response.data && response.data.ResponseDian && response.data.ResponseDian.Envelope && response.data.ResponseDian.Envelope.Body && response.data.ResponseDian.Envelope.Body.SendBillSyncResponse && response.data.ResponseDian.Envelope.Body.SendBillSyncResponse.SendBillSyncResult;
+        const statusCode = dianResult && dianResult.StatusCode;
 
         if (statusCode === '00') {
           this.$message.success('Nota de crédito creada exitosamente');
           this.showResolutionModal = false;
           location.reload();
         } else {
-          const errorMessage = response.data?.ResponseDian?.Envelope?.Body?.SendBillSyncResponse?.SendBillSyncResult?.ErrorMessage?.string || 'Error desconocido';
+          const errorMessage = (dianResult && dianResult.ErrorMessage && dianResult.ErrorMessage.string) || 'Error desconocido';
           this.$message.error('Error al crear la nota de crédito: ' + errorMessage);
         }
       })
