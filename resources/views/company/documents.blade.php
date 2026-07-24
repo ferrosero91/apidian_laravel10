@@ -1,3 +1,38 @@
+<style>
+    .page-header { border-bottom: 1px solid #e9ecef; padding-bottom: 15px; margin-bottom: 20px; }
+    .page-header h2 { font-size: 22px; font-weight: 600; color: #2B323D; margin: 0; }
+    .page-header .text-muted { font-size: 13px; }
+    .doc-card { border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; }
+    .doc-table { margin-bottom: 0; }
+    .doc-table thead th { background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #6c757d; letter-spacing: 0.3px; padding: 10px 10px; vertical-align: middle; white-space: nowrap; }
+    .doc-table tbody td { padding: 8px 10px; vertical-align: middle; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+    .doc-table tbody tr:hover { background-color: #f8f9fa; }
+    .doc-table .text-right { text-align: right; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; border-radius: 4px; font-weight: 500; }
+    .btn-dian { background-color: #6c757d; border-color: #6c757d; color: #fff; }
+    .btn-dian:hover { background-color: #5a6268; border-color: #545b62; color: #fff; }
+    .btn-cufe { background-color: #007bff; border-color: #007bff; color: #fff; }
+    .btn-cufe:hover { background-color: #0069d9; border-color: #0062cc; color: #fff; }
+    .btn-xml { background-color: #28a745; border-color: #28a745; color: #fff; }
+    .btn-xml:hover { background-color: #218838; border-color: #1e7e34; color: #fff; }
+    .btn-pdf { background-color: #dc3545; border-color: #dc3545; color: #fff; }
+    .btn-pdf:hover { background-color: #c82333; border-color: #bd2130; color: #fff; }
+    .btn-nota { background-color: #17a2b8; border-color: #17a2b8; color: #fff; }
+    .btn-nota:hover { background-color: #138496; border-color: #117a8b; color: #fff; }
+    .badge-val { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-val-si { background-color: #28a745; color: #fff; }
+    .badge-val-no { background-color: #dc3545; color: #fff; }
+    .badge-amb { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-amb-prod { background-color: #28a745; color: #fff; }
+    .badge-amb-hab { background-color: #ffc107; color: #212529; }
+    .client-name { font-weight: 600; color: #2B323D; }
+    .client-doc { font-size: 12px; color: #6c757d; }
+    .doc-number { font-weight: 600; color: #2B323D; font-family: monospace; font-size: 13px; }
+    .doc-actions-cell { white-space: nowrap; }
+    .doc-actions-cell .btn { margin: 1px 0; }
+    .pagination { margin: 0; }
+</style>
+
 <header class="page-header d-flex justify-content-between align-items-center">
     <div>
         <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
@@ -46,9 +81,9 @@
     </div>
 </div>
 @else
-<div class="card">
+<div class="card doc-card">
     <div class="table-responsive">
-        <table class="table table-sm table-striped table-hover">
+        <table class="table table-sm doc-table">
             <thead class="thead-light">
                 <tr>
                     <th>#</th>
@@ -72,47 +107,59 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>
                             @if($row->response_dian)
-                                <button type="button" class="btn btn-primary btn-xs modalApiResponse"
+                                <button type="button" class="btn btn-xs btn-dian modalApiResponse"
                                     data-content="{{ $row->response_dian }}">
                                     Respuesta DIAN
                                 </button>
                                 <br>
                             @endif
                             @if($row->cufe)
-                                <button type="button" class="btn btn-primary btn-xs btn-ver-cufe mt-1"
+                                <button type="button" class="btn btn-xs btn-cufe btn-ver-cufe mt-1"
                                     data-cufe="{{ $row->cufe }}">
                                     Ver CUFE
                                 </button>
                                 <br>
-                                <button type="button" class="btn btn-primary btn-xs makeApiRequest mt-1"
+                                <button type="button" class="btn btn-xs btn-cufe makeApiRequest mt-1"
                                     data-id="{{ $row->cufe }}">
                                     Consultar Xml
                                 </button>
                                 <br>
                             @endif
                             @if(!$row->state_document_id)
-                                <button type="button" class="btn btn-primary btn-xs modalChangeState mt-1"
+                                <button type="button" class="btn btn-xs btn-dian modalChangeState mt-1"
                                     data-id="{{ $row->id }}">
                                     ESTADO
                                 </button>
                             @endif
                         </td>
                         <td>
-                            <a class="btn btn-success btn-xs text-white"
+                            <a class="btn btn-xs btn-xml text-white"
                                 role="button"
                                 href="{{ url('/api/view/'.$row->identification_number.'/'.$row->xml) }}" target="_BLANK">
                                 XML
                             </a>
-                            <a class="btn btn-success btn-xs text-white mt-1"
+                            <a class="btn btn-xs btn-pdf text-white mt-1"
                                 role="button"
                                 href="{{ url('/api/view/'.$row->identification_number.'/'.$row->pdf) }}" target="_BLANK">
                                 PDF
                             </a>
                         </td>
-                        <td>{{ $row->ambient_id === 2 ? 'Habilitación' : 'Producción' }}</td>
-                        <td class="text-center">{{ $row->state_document_id ? 'Si' : 'No' }}</td>
+                        <td>
+                            @if($row->ambient_id === 2)
+                                <span class="badge-amb badge-amb-hab">Habilitación</span>
+                            @else
+                                <span class="badge-amb badge-amb-prod">Producción</span>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            @if($row->state_document_id)
+                                <span class="badge-val badge-val-si">Si</span>
+                            @else
+                                <span class="badge-val badge-val-no">No</span>
+                            @endif
+                        </td>
                         <td>{{ $row->date_issue }}</td>
-                        <td>{{ $row->prefix }}{{ $row->number }}</td>
+                        <td><span class="doc-number">{{ $row->prefix }}{{ $row->number }}</span></td>
                         <td>
                             @inject('typeDocuments', 'App\TypeDocumentIdentification')
                             @php
@@ -124,7 +171,7 @@
                                 {{dd($row->client)}}
                             @endif --}}
                             {{ $row->client->name ?? 'Sin nombre' }}<br>
-                            {{ $document_type != null ? $document_type->name : '' }} {{ $row->client->identification_number ?? 'sin identificación' }}-{{ $row->client->dv ?? ""}}</td>
+                            <span class="client-doc">{{ $document_type != null ? $document_type->name : '' }} {{ $row->client->identification_number ?? 'sin identificación' }}-{{ $row->client->dv ?? ""}}</span></td>
                         <td>{{ $row->type_document->name }}</td>
                         <td class="text-right">{{ round($row->total_tax, 2) }}</td>
                         <td class="text-right">{{ round($row->subtotal, 2) }}</td>
@@ -140,7 +187,7 @@
                                     }
                                 @endphp
                                 @if($isValidResponse)
-                                    <button type="button" class="btn btn-info btn-xs btn-credit-note mt-0"
+                                    <button type="button" class="btn btn-xs btn-nota btn-credit-note mt-0"
                                         data-id="{{ $row->id }}"
                                         data-cufe="{{ $row->cufe }}"
                                         data-request-api="{{ $row->request_api }}">
