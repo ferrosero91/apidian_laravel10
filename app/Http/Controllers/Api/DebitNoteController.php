@@ -222,8 +222,7 @@ class DebitNoteController extends Controller
         else
             $invoice_period = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Discrepancy response
         $discrepancycode = $request->discrepancyresponsecode;
@@ -704,8 +703,7 @@ class DebitNoteController extends Controller
         else
             $orderreference = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Discrepancy response
         $discrepancycode = $request->discrepancyresponsecode;

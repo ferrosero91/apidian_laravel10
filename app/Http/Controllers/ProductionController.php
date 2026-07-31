@@ -22,6 +22,8 @@ class ProductionController extends Controller
             'invoice' => $this->getEnvironmentStatus($company, 'invoice'),
             'support' => $this->getEnvironmentStatus($company, 'support'),
             'event' => $this->getEnvironmentStatus($company, 'event'),
+            'payroll' => $this->getEnvironmentStatus($company, 'payroll'),
+            'pos' => $this->getEnvironmentStatus($company, 'pos'),
         ];
 
         $typeDocuments = TypeDocument::all();
@@ -31,6 +33,8 @@ class ProductionController extends Controller
         // que los de documentos, para no perder resoluciones existentes).
         $invoiceResolutionIds = [1, 2, 3, 4, 5, 12];
         $supportResolutionIds = [11, 13];
+        $payrollResolutionIds = [9, 10]; // Nomina individual y ajuste
+        $posResolutionIds = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]; // Documentos equivalentes
 
         $invoiceData = array_merge([
             'documents' => Document::where('identification_number', $company->identification_number)
@@ -49,6 +53,20 @@ class ProductionController extends Controller
                 ->paginate(20, ['*'], 'support_page')
         ], $this->buildResolutionData($company, $supportResolutionIds));
 
+        $payrollData = array_merge([
+            'documents' => Document::where('identification_number', $company->identification_number)
+                ->whereIn('type_document_id', [9, 10])
+                ->orderBy('id', 'DESC')
+                ->paginate(20, ['*'], 'payroll_page')
+        ], $this->buildResolutionData($company, $payrollResolutionIds));
+
+        $posData = array_merge([
+            'documents' => Document::where('identification_number', $company->identification_number)
+                ->whereIn('type_document_id', range(15, 26))
+                ->orderBy('id', 'DESC')
+                ->paginate(20, ['*'], 'pos_page')
+        ], $this->buildResolutionData($company, $posResolutionIds));
+
         $eventData = [
             'documents' => ReceivedDocument::where('customer', $company->identification_number)
                 ->where('state_document_id', 1)
@@ -62,6 +80,8 @@ class ProductionController extends Controller
             'typeDocuments',
             'invoiceData',
             'supportData',
+            'payrollData',
+            'posData',
             'eventData'
         ));
     }
@@ -266,6 +286,10 @@ class ProductionController extends Controller
                 $software->identifier_support_document = $request->id;
                 $software->pin_support_document = $request->pin;
                 break;
+            case 'pos':
+                $software->identifier_eqdocs = $request->id;
+                $software->pin_eqdocs = $request->pin;
+                break;
             default:
                 return back()->with('error', 'Tipo de documento no válido.');
         }
@@ -289,6 +313,12 @@ class ProductionController extends Controller
                 break;
             case 'event':
                 $environmentId = $company->event_type_environment_id ?? 2;
+                break;
+            case 'payroll':
+                $environmentId = $company->payroll_type_environment_id ?? 2;
+                break;
+            case 'pos':
+                $environmentId = $company->eqdocs_type_environment_id ?? 2;
                 break;
         }
 
@@ -314,6 +344,26 @@ class ProductionController extends Controller
                             'identifier' => $company->software->identifier_support_document,
                             'pin' => $company->software->pin_support_document,
                             'name' => $company->software->name ?? 'Software DIAN Documentos Soporte'
+                        ];
+                    }
+                    break;
+                case 'pos':
+                    if ($company->software->identifier_eqdocs && $company->software->pin_eqdocs) {
+                        $hasSoftware = true;
+                        $softwareInfo = [
+                            'identifier' => $company->software->identifier_eqdocs,
+                            'pin' => $company->software->pin_eqdocs,
+                            'name' => $company->software->name ?? 'Software DIAN Doc. Equivalentes'
+                        ];
+                    }
+                    break;
+                case 'payroll':
+                    if ($company->software->identifier_payroll && $company->software->pin_payroll) {
+                        $hasSoftware = true;
+                        $softwareInfo = [
+                            'identifier' => $company->software->identifier_payroll,
+                            'pin' => $company->software->pin_payroll,
+                            'name' => $company->software->name ?? 'Software DIAN Nómina'
                         ];
                     }
                     break;
@@ -365,6 +415,24 @@ class ProductionController extends Controller
                     $company->software->save();
                 }
                 break;
+            case 'pos':
+                $company->eqdocs_type_environment_id = $environmentId;
+                if ($company->software) {
+                    $company->software->url_eqdocs = ($environmentId == 1)
+                        ? 'https://vpfe.dian.gov.co/WcfDianCustomerServices.svc'
+                        : 'https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc';
+                    $company->software->save();
+                }
+                break;
+            case 'payroll':
+                $company->payroll_type_environment_id = $environmentId;
+                if ($company->software) {
+                    $company->software->url_payroll = ($environmentId == 1)
+                        ? 'https://vpfe.dian.gov.co/WcfDianCustomerServices.svc'
+                        : 'https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc';
+                    $company->software->save();
+                }
+                break;
             default:
                 return back()->with('error', 'Tipo de documento no válido');
         }
@@ -382,16 +450,7 @@ class ProductionController extends Controller
             $testSetId = trim($request->input('test_set_id'));
             $zipkey = $request->input('zipkey');
             $type = $request->input('type', 'invoice');
-            // Nomina y Documentos equivalentes (POS) no disponibles en la version Community.
-            if ($type === 'pos' || $type === 'payroll') {
-                return response()->json(['error' => 'Nomina y Documentos equivalentes no estan disponibles en la version Community.']);
-            }
-            // \Log::info('Paso a producción iniciado', [
-            //     'step' => $step,
-            //     'testSetId' => $testSetId,
-            //     'zipkey' => $zipkey,
-            //     'company' => $company
-            // ]);
+            // Nomina y Documentos equivalentes (POS) habilitados
             $company = Company::with('software', 'user')->where('identification_number', $company)->first();
             if (!$company) {
                 // \Log::error('Empresa no encontrada', ['company' => $company]);

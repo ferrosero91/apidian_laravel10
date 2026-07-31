@@ -62,12 +62,6 @@ class StateController extends Controller
         else
             $certificate_days_left = $c['certificate_days_left'];
 
-        if($request->is_payroll || $request->is_eqdoc)
-            return [
-                'success' => false,
-                'message' => "Nomina y Documentos Equivalentes no estan disponibles en la version Community."
-            ];
-
         $getStatusZip = new GetStatusZip($user->company->certificate->path, $user->company->certificate->password, $user->company->software->url);
 
         $getStatusZip->trackId = $trackId;
@@ -465,12 +459,6 @@ class StateController extends Controller
             return $c;
         else
             $certificate_days_left = $c['certificate_days_left'];
-
-        if($request->is_payroll || $request->is_eqdoc)
-            return [
-                'success' => false,
-                'message' => "Nomina y Documentos Equivalentes no estan disponibles en la version Community."
-            ];
 
         $getStatus = new GetStatus($user->company->certificate->path, $user->company->certificate->password, $user->company->software->url);
 

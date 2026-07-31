@@ -47,7 +47,7 @@ class HomeController extends Controller
             });
         }
 
-        $companies = $companiesQuery->get()->transform(function ($row) {
+        $companies = $companiesQuery->with('user')->get()->transform(function ($row) {
             $documents = Document::where('identification_number', $row->identification_number)->count();
             $row->total_documents = $documents;
             return $row;
@@ -120,8 +120,9 @@ class HomeController extends Controller
 
     // replica de SellerLoginController@SellersRadianEventsView
     public function events($company_idnumber){
+        $company = Company::where('identification_number', $company_idnumber)->firstOrFail();
         $documents = ReceivedDocument::where('customer','=',$company_idnumber)->where('state_document_id', '=', 1)->paginate(10);
-        return view('company.events', compact('documents', 'company_idnumber'));
+        return view('company.events', compact('documents', 'company_idnumber', 'company'));
     }
 
     public function update(Request $request, $companyId)
@@ -204,6 +205,289 @@ class HomeController extends Controller
                 'success' => false,
                 'message' => 'Error al actualizar la empresa: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function toggleState($companyId)
+    {
+        try {
+            $company = Company::findOrFail($companyId);
+
+            /** @var User|null $user */
+            $user = auth()->user();
+            if ($user && !$user->isPlatformAdmin()) {
+                abort(403, 'No tienes permiso para realizar esta acción.');
+            }
+
+            $company->update([
+                'state' => !$company->state
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => $company->state ? 'Empresa habilitada.' : 'Empresa deshabilitada.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cambiar estado: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($companyId)
+    {
+        try {
+            $company = Company::findOrFail($companyId);
+
+            /** @var User|null $user */
+            $user = auth()->user();
+            if ($user && !$user->isPlatformAdmin()) {
+                abort(403, 'No tienes permiso para eliminar empresas.');
+            }
+
+            // Eliminar documentos relacionados
+            Document::where('identification_number', $company->identification_number)->delete();
+
+            // Eliminar empresa
+            $company->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empresa eliminada exitosamente.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar empresa: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function changeEnvironment(Request $request, $companyId)
+    {
+        try {
+            $request->validate([
+                'type_environment_id' => 'required|in:1,2',
+            ]);
+
+            $company = Company::findOrFail($companyId);
+
+            /** @var User|null $user */
+            $user = auth()->user();
+            if ($user && !$user->isPlatformAdmin()) {
+                abort(403, 'No tienes permiso para realizar esta acción.');
+            }
+
+            $company->update([
+                'type_environment_id' => $request->type_environment_id
+            ]);
+
+            $envName = $request->type_environment_id == 1 ? 'Producción' : 'Habilitación';
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ambiente cambiado a ' . $envName . ' exitosamente.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cambiar ambiente: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // =========================================================================
+    // MONITORING
+    // =========================================================================
+
+    public function monitoring()
+    {
+        $stats = [
+            'total_companies' => \App\Company::count(),
+            'total_documents' => \App\Document::count(),
+            'total_users' => \App\User::count(),
+            'documents_today' => \App\Document::whereDate('created_at', today())->count(),
+            'documents_this_month' => \App\Document::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
+            'server_time' => now()->format('Y-m-d H:i:s'),
+            'php_version' => phpversion(),
+            'laravel_version' => app()->version(),
+            'database_size' => $this->getDatabaseSize(),
+            'storage_usage' => $this->getStorageUsage(),
+        ];
+
+        return view('monitoring', compact('stats'));
+    }
+
+    private function getDatabaseSize()
+    {
+        try {
+            $dbName = config('database.connections.mysql.database');
+            $result = \DB::select("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size FROM information_schema.tables WHERE table_schema = ?", [$dbName]);
+            return ($result[0]->size ?? 0) . ' MB';
+        } catch (\Exception $e) {
+            return 'N/A';
+        }
+    }
+
+    private function getStorageUsage()
+    {
+        try {
+            $bytes = 0;
+            $path = storage_path('app');
+            if (\File::isDirectory($path)) {
+                $files = \File::allFiles($path);
+                foreach ($files as $file) {
+                    $bytes += $file->getSize();
+                }
+            }
+            return round($bytes / 1024 / 1024, 2) . ' MB';
+        } catch (\Exception $e) {
+            return 'N/A';
+        }
+    }
+
+    // =========================================================================
+    // BACKUPS
+    // =========================================================================
+
+    public function backups()
+    {
+        $backupPath = storage_path('app/backups');
+        $backups = [];
+
+        if (\File::isDirectory($backupPath)) {
+            $files = \File::files($backupPath);
+            foreach ($files as $file) {
+                if (pathinfo($file->getFilename(), PATHINFO_EXTENSION) === 'sql') {
+                    $backups[] = [
+                        'name' => $file->getFilename(),
+                        'size' => round($file->getSize() / 1024 / 1024, 2) . ' MB',
+                        'date' => \Carbon\Carbon::createFromTimestamp($file->getMTime())->format('Y-m-d H:i:s'),
+                    ];
+                }
+            }
+        }
+
+        usort($backups, function($a, $b) {
+            return strcmp($b['date'], $a['date']);
+        });
+
+        return view('backups', compact('backups'));
+    }
+
+    public function backupCreate()
+    {
+        try {
+            $backupPath = storage_path('app/backups');
+            if (!\File::isDirectory($backupPath)) {
+                \File::makeDirectory($backupPath, 0755, true);
+            }
+
+            $filename = 'backup_' . date('Y-m-d_H-i-s') . '.sql';
+            $dbName = config('database.connections.mysql.database');
+            $dbHost = config('database.connections.mysql.host');
+            $dbUser = config('database.connections.mysql.username');
+            $dbPass = config('database.connections.mysql.password');
+
+            // Try mysqldump first
+            $command = "mysqldump -h {$dbHost} -u {$dbUser} -p'{$dbPass}' {$dbName} 2>&1";
+            $output = [];
+            $returnVar = 0;
+            exec($command, $output, $returnVar);
+
+            if ($returnVar === 0 && !empty($output)) {
+                $sqlContent = implode("\n", $output);
+                \File::put($backupPath . '/' . $filename, $sqlContent);
+                return response()->json(['success' => true, 'message' => 'Backup creado exitosamente.']);
+            }
+
+            // Fallback: use PHP to dump tables
+            return $this->createPhpBackup($backupPath, $filename, $dbName);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    private function createPhpBackup($backupPath, $filename, $dbName)
+    {
+        try {
+            $sql = "-- APIDIAN Database Backup\n";
+            $sql .= "-- Date: " . date('Y-m-d H:i:s') . "\n";
+            $sql .= "-- Database: {$dbName}\n\n";
+            $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+
+            // Get all tables
+            $tables = \DB::select("SHOW TABLES");
+            $tableKey = "Tables_in_{$dbName}";
+
+            foreach ($tables as $table) {
+                $tableName = $table->$tableKey;
+                $sql .= "-- Table: {$tableName}\n";
+                $sql .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
+
+                // Get CREATE TABLE statement
+                $createTable = \DB::select("SHOW CREATE TABLE `{$tableName}`");
+                if (isset($createTable[0]->{'Create Table'})) {
+                    $sql .= $createTable[0]->{'Create Table'} . ";\n\n";
+                }
+
+                // Get data
+                $rows = \DB::select("SELECT * FROM `{$tableName}`");
+                if (!empty($rows)) {
+                    $columns = array_keys((array) $rows[0]);
+                    $sql .= "INSERT INTO `{$tableName}` (`" . implode('`, `', $columns) . "`) VALUES\n";
+
+                    $values = [];
+                    foreach ($rows as $row) {
+                        $rowValues = [];
+                        foreach ((array) $row as $value) {
+                            if ($value === null) {
+                                $rowValues[] = 'NULL';
+                            } else {
+                                $rowValues[] = "'" . addslashes($value) . "'";
+                            }
+                        }
+                        $values[] = '(' . implode(', ', $rowValues) . ')';
+                    }
+                    $sql .= implode(",\n", $values) . ";\n\n";
+                }
+            }
+
+            $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
+
+            \File::put($backupPath . '/' . $filename, $sql);
+
+            return response()->json(['success' => true, 'message' => 'Backup creado exitosamente.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al crear backup: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function backupDownload($file)
+    {
+        $path = storage_path('app/backups/' . $file);
+        if (\File::exists($path) && pathinfo($file, PATHINFO_EXTENSION) === 'sql') {
+            return response()->download($path);
+        }
+        abort(404);
+    }
+
+    public function backupDelete($file)
+    {
+        try {
+            $path = storage_path('app/backups/' . $file);
+            if (\File::exists($path) && pathinfo($file, PATHINFO_EXTENSION) === 'sql') {
+                \File::delete($path);
+                return response()->json(['success' => true, 'message' => 'Backup eliminado.']);
+            }
+            return response()->json(['success' => false, 'message' => 'Archivo no encontrado.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al eliminar.'], 500);
         }
     }
 }

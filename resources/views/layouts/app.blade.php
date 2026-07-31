@@ -56,6 +56,7 @@
         <link rel="stylesheet" href="{{ asset('theme/custom_styles.css') }}" />
     @endif
 
+    <link rel="stylesheet" href="{{ asset('css/custom-element-ui.css') }}" />
 
     @stack('styles')
 
@@ -104,6 +105,25 @@
 
         a:link {
             color: #2E64FE;
+        }
+
+        /* Prevent sidebar from being collapsed */
+        html.sidebar-left-collapsed .sidebar-left {
+            width: 230px !important;
+            transform: none !important;
+        }
+        html.sidebar-left-collapsed .inner-wrapper {
+            margin-left: 230px !important;
+        }
+        html.sidebar-left-collapsed .sidebar-left .sidebar-toggle {
+            display: none !important;
+        }
+        /* Hide nav-parent expand/collapse arrows */
+        .nav-main > li.nav-parent > a:after {
+            display: none !important;
+        }
+        .nav-main > li.nav-expanded > ul.nav-children {
+            display: none !important;
         }
 
         @guest

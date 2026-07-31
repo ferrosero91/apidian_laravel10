@@ -15,26 +15,7 @@
         @endif
     </div>
 </header>
-<div class="card mb-3">
-    <div class="card-body">
-        <div class="row align-items-end">
-            <!-- Filtro primero -->
-            <div class="col-md-4">
-                <label><strong>Filtrar por</strong></label>
-                <select id="filter-type" class="form-control" clearable>
-                    <option value="nit">NIT</option>
-                    <option value="email">Correo</option>
-                    <option value="name">Nombre</option>
-                </select>
-            </div>
-            <!-- Barra de búsqueda a la derecha -->
-            <div class="col-md-8">
-                <label><strong>Búsqueda</strong></label>
-                <input type="text" id="filter-text" class="form-control" placeholder="Escribe para buscar...">
-            </div>
-        </div>
-    </div>
-</div>
+
 <div class="card">
     <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -101,7 +82,7 @@
                                             </span>
                                             <span class="ml-2">Documentos Electrónicos</span>
                                     </el-dropdown-item >
-                                    <el-dropdown-item class="d-flex align-items-center">
+                                    <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.users.index', $row->id) }}')">
                                             <span class="dropdown-icon-left">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -117,7 +98,6 @@
                                                 </svg>
                                             </span>
                                             <span class="ml-2">Usuarios</span>
-                                            <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                     <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.email.index', $row->id) }}')">
                                             <span class="dropdown-icon-left">
@@ -132,7 +112,7 @@
                                             </span>
                                             <span class="ml-2">Configurar Correo</span>
                                     </el-dropdown-item>
-                                    <el-dropdown-item class="d-flex align-items-center">
+                                    <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.app-access.index', $row->id) }}')">
                                         <span class="dropdown-icon-left">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -145,10 +125,9 @@
                                             </svg>
                                         </span>
                                         <span class="ml-2">Acceso a la App</span>
-                                        <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                     <el-dropdown-item divided></el-dropdown-item>
-                                    <el-dropdown-item class="d-flex align-items-center">
+                                    <el-dropdown-item class="d-flex align-items-center" onclick="redirectTo('{{ route('company.storage.index', $row->id) }}')">
                                         <span class="dropdown-icon-left">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -162,7 +141,6 @@
                                             </svg>
                                         </span>
                                         <span class="ml-2">Almacenamiento S3</span>
-                                        <span class="badge ml-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -480,37 +458,7 @@ window.redirectTo = function(url) {
     window.location.href = url;
 }
 document.addEventListener("DOMContentLoaded", function () {
-
-    const filterText = document.getElementById("filter-text");
-    const filterType = document.getElementById("filter-type");
-
-    const tableRows = document.querySelectorAll("table tbody tr");
-
-    function applyFilter() {
-        const value = filterText.value.toLowerCase().trim();
-        const type = filterType.value;
-
-        tableRows.forEach(row => {
-            let columnText = "";
-
-            if (type === "nit") {
-                columnText = row.children[1].textContent.toLowerCase(); // NIT
-            } else if (type === "email") {
-                columnText = row.children[4].textContent.toLowerCase(); // email
-            } else if (type === "name") {
-                columnText = row.children[3].textContent.toLowerCase(); // nombre
-            }
-
-            if (columnText.includes(value)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
-
-    filterText.addEventListener("keyup", applyFilter);
-    filterType.addEventListener("change", applyFilter);
+    // Filter removed - table is now directly visible
 });
 // Datos de certificado por empresa (generados server-side)
 window.companyCertificateData = {

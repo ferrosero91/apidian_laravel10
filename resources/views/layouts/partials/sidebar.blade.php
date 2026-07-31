@@ -14,14 +14,11 @@ $cust_id = $path[2];
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-letter-a-small"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 16v-6a2 2 0 1 1 4 0v6" /><path d="M10 13h4" /></svg>
             </div>            
             <span class="sidebar-title-text-container">
-                <span class="sidebar-title-text">Apidian Community Edition</span>
+                <span class="sidebar-title-text">APIDIAN</span>
                 <br>
                 <span class="text-muted sidebar-title-text-second">Menu</span>
             </span>
         </a>
-        <div class="sidebar-toggle d-none d-md-block" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle" style="display: none !important">
-            <i class="fas fa-bars" aria-label="Toggle sidebar"></i>
-        </div>
     </div>
     <div class="nano">
         <div class="nano-content">
@@ -43,6 +40,27 @@ $cust_id = $path[2];
                         </a>
                     </li>
 
+                    <li class="{{ ($path[0] === 'monitoring')?'nav-active':'' }}">
+                        <a class="nav-link" href="{{route('monitoring')}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-dashboard mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 13m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M13.45 11.55l2.05 -2.05" /><path d="M6.4 20a9 9 0 1 1 12.8 0" /></svg>
+                            <span>Monitoreo</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ ($path[0] === 'backups')?'nav-active':'' }}">
+                        <a class="nav-link" href="{{route('backups')}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-database mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" /><path d="M4 6v6a8 3 0 0 0 16 0v-6" /><path d="M4 12v6a8 3 0 0 0 16 0v-6" /></svg>
+                            <span>Backups</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ ($path[0] === 'logs')?'nav-active':'' }}">
+                        <a class="nav-link" href="{{route('logs')}}" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-bug mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 9v-1a3 3 0 0 1 6 0v1" /><path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" /><path d="M3 13l4 0" /><path d="M17 13l4 0" /><path d="M12 20l0 -6" /><path d="M4 19l3.35 -2" /><path d="M20 19l-3.35 -2" /><path d="M4 7l3.75 2.4" /><path d="M20 7l-3.75 2.4" /></svg>
+                            <span>Logs</span>
+                        </a>
+                    </li>
+
                     @endif
                     @if(Request::is('company*'))
                         <li class="{{ Route::is('company') ? 'nav-active' : '' }}">
@@ -58,70 +76,6 @@ $cust_id = $path[2];
                             </a>
                         </li>
                     @endif
-                    @if(!Request::is('company*'))
-                    <li class="">
-                        <a href="{{route('logs')}}" class="nav-link" target="BLANK">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-bug mr-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 9v-1a3 3 0 0 1 6 0v1" /><path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" /><path d="M3 13l4 0" /><path d="M17 13l4 0" /><path d="M12 20l0 -6" /><path d="M4 19l3.35 -2" /><path d="M20 19l-3.35 -2" /><path d="M4 7l3.75 2.4" /><path d="M20 7l-3.75 2.4" /></svg>
-                            <span>Logs</span>
-                        </a>
-                    </li>
-                    @endif
-
-
-                    {{-- @if(isset(Auth::user()->email))
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'' }}">
-                            <a class="nav-link" href="{{route('documents_index')}}">
-                                <i class="fas fa-receipt" aria-hidden="true"></i>
-                                <span>Documentos</span>
-                            </a>
-                        </li>
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'' }}">
-                                <a class="nav-link" href="{{route('tax_index')}}">
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Impuestos</span>
-                                </a>
-                            </li>
-                        <li class="nav-parent {{ in_array($path[0], ['items_ecommerce', 'tags', 'promotions'])?'nav-active nav-expanded':'' }}">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-receipt" aria-hidden="true"></i>
-                                <span>Empresa</span>
-                            </a>
-                            <ul class="nav nav-children">
-                                <li class="{{ ($path[0] === 'items_ecommerce')?'nav-active':'' }}">
-                                    <a class="nav-link" href="{{route('configuration_index')}}">
-                                        Lista
-                                    </a>
-                                </li>
-                                <li class="{{ ($path[0] === 'tags')?'nav-active':'' }}">
-                                    <a class="nav-link" href="{{route('configuration_admin')}}">
-                                        Nuevo
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    @else
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'nav-active' }}">
-                            <form action="{{ url('/okcustomerlogin/'.$comp_id.'/'.$cust_id) }}" method="POST">
-                                @csrf
-                                <a class="nav-link" href="javascript:;" onclick="$('#action-button').click();">
-                                    <input type="hidden" name="verificar" value="FALSE"/>
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Documentos Recibidos</span>
-                                </a>
-                                <input type="submit" id="action-button" style="display: none;" >
-                            </form>
-                        </li>
-                        <li class="{{ ($path[0] === 'dashboard')?'nav-active':'nav-active' }}">
-                            <form action="{{ url('/customer-password/'.$comp_id.'/'.$cust_id) }}" method="GET">
-                                @csrf
-                                <a class="nav-link" href="javascript:;" onclick="$('#action-button2').click();">
-                                    <i class="fas fa-receipt" aria-hidden="true"></i>
-                                    <span>Cambiar Password Cliente</span>
-                                </a>
-                                <input type="submit" id="action-button2" style="display: none;" >
-                            </form>
-                        </li>
-                    @endif --}}
                 </ul>
             </nav>
         </div>

@@ -120,8 +120,7 @@ class InvoiceController extends Controller
         else
             $orderreference = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Payment form
         if(isset($request->payment_form['payment_form_id']))
@@ -381,8 +380,7 @@ class InvoiceController extends Controller
         else
             $orderreference = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Payment form
         if(isset($request->payment_form['payment_form_id']))
@@ -933,8 +931,7 @@ class InvoiceController extends Controller
         else
             $orderreference = NULL;
 
-        // Health Fields (Enterprise) deshabilitado en Community
-        $healthfields = NULL;
+        $healthfields = $request->health_fields ?? NULL;
 
         // Payment form
         if(isset($request->payment_form['payment_form_id']))

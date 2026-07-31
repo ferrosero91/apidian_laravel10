@@ -345,6 +345,136 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<script>
+// Load PDF templates
+document.addEventListener('DOMContentLoaded', function() {
+    var companyId = {{ $company->id }};
+    var apiToken = '{{ $company->user->api_token }}';
+    var currentTemplate = {{ $company->graphic_representation_template ?? 1 }};
+
+    function loadTemplates(containerId) {
+        var container = document.getElementById(containerId || 'template-gallery');
+        if (!container) return;
+
+        container.innerHTML = '<div class="col-12 text-center"><i class="fas fa-spinner fa-spin"></i> Cargando plantillas...</div>';
+
+        fetch('/api/templates', {
+            headers: {
+                'Authorization': 'Bearer ' + apiToken,
+                'Accept': 'application/json'
+            }
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.templates && data.templates.length > 0) {
+                var html = '';
+                data.templates.forEach(function(template) {
+                    var isCurrent = template.id == currentTemplate;
+                    html += '<div class="col-md-3 col-sm-6 mb-4">';
+                    html += '  <div class="card ' + (isCurrent ? 'border-primary' : '') + '" style="cursor:pointer;" onclick="selectTemplate(' + template.id + ')">';
+                    html += '    <div style="height:200px;overflow:hidden;background:#f8f9fa;display:flex;align-items:center;justify-content:center;">';
+                    html += '      <img src="' + template.image_url + '" style="max-width:100%;max-height:100%;object-fit:contain;" alt="Plantilla ' + template.id + '" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div style=\\\'padding:20px;text-align:center;color:#666\\\'>Vista previa no disponible</div>\'">';
+                    html += '    </div>';
+                    html += '    <div class="card-body text-center p-2">';
+                    html += '      <h6 class="card-title mb-1">Plantilla ' + template.id + '</h6>';
+                    if (isCurrent) {
+                        html += '      <span class="badge badge-primary">Actual</span>';
+                    }
+                    html += '    </div>';
+                    html += '  </div>';
+                    html += '</div>';
+                });
+                container.innerHTML = html;
+
+                // Also update support template gallery if it exists
+                var supportContainer = document.getElementById('support-template-gallery');
+                if (supportContainer && containerId !== 'support-template-gallery') {
+                    supportContainer.innerHTML = html;
+                }
+            } else {
+                container.innerHTML = '<div class="col-12"><div class="alert alert-warning">No se encontraron plantillas disponibles</div></div>';
+            }
+        })
+        .catch(function(error) {
+            console.error('Error loading templates:', error);
+            container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar plantillas: ' + error.message + '</div></div>';
+        });
+    }
+
+    window.selectTemplate = function(templateId) {
+        fetch('/api/templates', {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + apiToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ id: templateId })
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                currentTemplate = templateId;
+                loadTemplates('template-gallery');
+                loadTemplates('support-template-gallery');
+                new PNotify({
+                    text: 'Plantilla actualizada correctamente',
+                    type: 'success',
+                    delay: 3000
+                });
+            } else {
+                new PNotify({
+                    text: data.error || 'Error al actualizar plantilla',
+                    type: 'error',
+                    delay: 3000
+                });
+            }
+        })
+        .catch(function() {
+            new PNotify({
+                text: 'Error de conexión',
+                type: 'error',
+                delay: 3000
+            });
+        });
+    };
+
+    // Load templates immediately for the invoice tab
+    loadTemplates('template-gallery');
+
+    // Load templates when tabs are shown
+    var templateTab = document.getElementById('invoice-template-tab');
+    if (templateTab) {
+        templateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates('template-gallery');
+        });
+    }
+
+    // Load templates for support tab
+    var supportTemplateTab = document.getElementById('support-template-tab');
+    if (supportTemplateTab) {
+        supportTemplateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates('support-template-gallery');
+        });
+    }
+
+    // Load templates for payroll tab
+    var payrollTemplateTab = document.getElementById('payroll-template-tab');
+    if (payrollTemplateTab) {
+        payrollTemplateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates('payroll-template-gallery');
+        });
+    }
+
+    // Load templates for POS tab
+    var posTemplateTab = document.getElementById('pos-template-tab');
+    if (posTemplateTab) {
+        posTemplateTab.addEventListener('shown.bs.tab', function() {
+            loadTemplates('pos-template-gallery');
+        });
+    }
+});
+</script>
 @endpush
 
 @section('content')
@@ -380,12 +510,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>
         </li>
         <li class="nav-item d-flex" role="presentation">
-            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold disabled"
-                id="payroll-tab" type="button" role="tab"
-                aria-controls="payroll" aria-selected="false" disabled>
+            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                id="payroll-tab" data-bs-toggle="tab" data-bs-target="#payroll" type="button" role="tab"
+                aria-controls="payroll" aria-selected="false">
                 <img src="{{ asset('production/nomina-electronica-icon.svg') }}" alt="Nómina electrónica" class="tab-icon me-2">
                 Nómina electrónica
-                <span class="badge ms-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
             </button>
         </li>
         <li class="nav-item d-flex" role="presentation">
@@ -405,12 +534,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>
         </li>
         <li class="nav-item d-flex" role="presentation">
-            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold disabled"
-                id="pos-tab" type="button" role="tab"
-                aria-controls="pos" aria-selected="false" disabled>
+            <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                id="pos-tab" data-bs-toggle="tab" data-bs-target="#pos" type="button" role="tab"
+                aria-controls="pos" aria-selected="false">
                 <img src="{{ asset('production/documentos-equivalentes-icon.svg') }}" alt="Documentos equivalentes" class="tab-icon me-2">
                 Documentos equivalentes
-                <span class="badge ms-2" style="background-color:#6f42c1;color:#fff;font-size:10px;font-weight:600;letter-spacing:.3px;">Enterprise</span>
             </button>
         </li>
     </ul>
@@ -421,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Factura Electrónica</span>
+                    <span class="text-muted">Factura Electrónica - Ambiente: {{ ($environmentStatuses['invoice']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -454,6 +582,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         Resoluciones
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="invoice-template-tab" data-bs-toggle="tab" data-bs-target="#invoice-template" type="button" role="tab"
+                        aria-controls="invoice-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="invoiceSubTabsContent">
                 <div class="tab-pane fade show active" id="invoice-list" role="tabpanel" aria-labelledby="invoice-list-tab">
@@ -482,6 +618,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         'resolutionTypeDocuments' => $invoiceData['resolutionTypeDocuments'] ?? collect(),
                     ])
                 </div>
+                <div class="tab-pane fade" id="invoice-template" role="tabpanel" aria-labelledby="invoice-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Factura Electrónica para esta empresa.<br>Esta plantilla también se usa para las notas crédito y débito.</p>
+                        <div class="row" id="template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -491,7 +636,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Documento Soporte</span>
+                    <span class="text-muted">Documento Soporte - Ambiente: {{ ($environmentStatuses['support']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -524,6 +669,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         Resoluciones
                     </button>
                 </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="support-template-tab" data-bs-toggle="tab" data-bs-target="#support-template" type="button" role="tab"
+                        aria-controls="support-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="supportSubTabsContent">
                 <div class="tab-pane fade show active" id="support-list" role="tabpanel" aria-labelledby="support-list-tab">
@@ -552,16 +705,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         'resolutionTypeDocuments' => $supportData['resolutionTypeDocuments'] ?? collect(),
                     ])
                 </div>
+                <div class="tab-pane fade" id="support-template" role="tabpanel" aria-labelledby="support-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Documento Soporte para esta empresa.</p>
+                        <div class="row" id="support-template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Eventos RADIAN -->
         <div class="tab-pane fade mt-2" id="event" role="tabpanel" aria-labelledby="event-tab">
             <header class="page-header d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
                     <br>
-                    <span class="text-muted">Eventos RADIAN</span>
+                    <span class="text-muted">Eventos RADIAN - Ambiente: {{ ($environmentStatuses['event']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
                 </div>
                 <div class="mt-auto pb-1">
                     <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
@@ -602,6 +762,182 @@ document.addEventListener('DOMContentLoaded', function() {
                         'environmentStatus' => $environmentStatuses['event']
                     ])
                 </div>
+            </div>
+        </div>
+
+        <!-- Nómina Electrónica -->
+        <div class="tab-pane fade mt-2" id="payroll" role="tabpanel" aria-labelledby="payroll-tab">
+            <header class="page-header d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
+                    <br>
+                    <span class="text-muted">Nómina Electrónica - Ambiente: {{ ($environmentStatuses['payroll']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
+                </div>
+                <div class="mt-auto pb-1">
+                    <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i> Volver
+                    </a>
+                </div>
+            </header>
+            <ul class="nav nav-tabs nav-justified mb-0 sub-tabs" id="payrollSubTabs" role="tablist" style="background: #fff;">
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold active"
+                        id="payroll-list-tab" data-bs-toggle="tab" data-bs-target="#payroll-list" type="button" role="tab"
+                        aria-controls="payroll-list" aria-selected="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l11 0" /><path d="M9 12l11 0" /><path d="M9 18l11 0" /><path d="M5 6l0 .01" /><path d="M5 12l0 .01" /><path d="M5 18l0 .01" /></svg>
+                        Listado
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="payroll-production-tab" data-bs-toggle="tab" data-bs-target="#payroll-production" type="button" role="tab"
+                        aria-controls="payroll-production" aria-selected="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.003 21c-.732 .001 -1.465 -.438 -1.678 -1.317a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c.886 .215 1.325 .957 1.318 1.694" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M19.001 15.5v1.5" /><path d="M19.001 21v1.5" /><path d="M22.032 17.25l-1.299 .75" /><path d="M17.27 20l-1.3 .75" /><path d="M15.97 17.25l1.3 .75" /><path d="M20.733 20l1.3 .75" /></svg>
+                        Paso a Producción
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="payroll-resolutions-tab" data-bs-toggle="tab" data-bs-target="#payroll-resolutions" type="button" role="tab"
+                        aria-controls="payroll-resolutions" aria-selected="false">
+                        <i class="fas fa-file-invoice me-2"></i>
+                        Resoluciones
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="payroll-template-tab" data-bs-toggle="tab" data-bs-target="#payroll-template" type="button" role="tab"
+                        aria-controls="payroll-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="payrollSubTabsContent">
+                <div class="tab-pane fade show active" id="payroll-list" role="tabpanel" aria-labelledby="payroll-list-tab">
+                    @include('company.documents', [
+                        'documents' => $payrollData['documents'] ?? collect(),
+                        'resolution_credit_notes' => collect(),
+                        'company' => $company,
+                        'company_idnumber' => $company->identification_number,
+                        'token_company' => $company->user->api_token ?? null,
+                        'type' => 'payroll'
+                    ])
+                </div>
+                <div class="tab-pane fade" id="payroll-production" role="tabpanel" aria-labelledby="payroll-production-tab">
+                    @include('company.production.invoice.index', [
+                        'company' => $company,
+                        'environmentStatus' => $environmentStatuses['payroll'],
+                        'typeDocuments' => $typeDocuments
+                    ])
+                </div>
+                <div class="tab-pane fade" id="payroll-resolutions" role="tabpanel" aria-labelledby="payroll-resolutions-tab">
+                    @include('company.production._resolutions_tab', [
+                        'company' => $company,
+                        'type' => 'payroll',
+                        'resolutionsHab' => $payrollData['resolutionsHab'] ?? collect(),
+                        'resolutionsProd' => $payrollData['resolutionsProd'] ?? collect(),
+                        'resolutionTypeDocuments' => $payrollData['resolutionTypeDocuments'] ?? collect(),
+                    ])
+                </div>
+                <div class="tab-pane fade" id="payroll-template" role="tabpanel" aria-labelledby="payroll-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Nómina Electrónica para esta empresa.</p>
+                        <div class="row" id="payroll-template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentos Equivalentes -->
+        <div class="tab-pane fade mt-2" id="pos" role="tabpanel" aria-labelledby="pos-tab">
+            <header class="page-header d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2>{{ $company->user->name }} - {{ $company->identification_number }}</h2>
+                    <br>
+                    <span class="text-muted">Documentos Equivalentes - Ambiente: {{ ($environmentStatuses['pos']['environment_id'] ?? 2) == 1 ? 'Producción' : 'Habilitación' }}</span>
+                </div>
+                <div class="mt-auto pb-1">
+                    <a href="{{ route('home') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i> Volver
+                    </a>
+                </div>
+            </header>
+            <ul class="nav nav-tabs nav-justified mb-0 sub-tabs" id="posSubTabs" role="tablist" style="background: #fff;">
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold active"
+                        id="pos-list-tab" data-bs-toggle="tab" data-bs-target="#pos-list" type="button" role="tab"
+                        aria-controls="pos-list" aria-selected="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-list"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l11 0" /><path d="M9 12l11 0" /><path d="M9 18l11 0" /><path d="M5 6l0 .01" /><path d="M5 12l0 .01" /><path d="M5 18l0 .01" /></svg>
+                        Listado
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="pos-production-tab" data-bs-toggle="tab" data-bs-target="#pos-production" type="button" role="tab"
+                        aria-controls="pos-production" aria-selected="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-settings-cog"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.003 21c-.732 .001 -1.465 -.438 -1.678 -1.317a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c.886 .215 1.325 .957 1.318 1.694" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M19.001 15.5v1.5" /><path d="M19.001 21v1.5" /><path d="M22.032 17.25l-1.299 .75" /><path d="M17.27 20l-1.3 .75" /><path d="M15.97 17.25l1.3 .75" /><path d="M20.733 20l1.3 .75" /></svg>
+                        Paso a Producción
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="pos-resolutions-tab" data-bs-toggle="tab" data-bs-target="#pos-resolutions" type="button" role="tab"
+                        aria-controls="pos-resolutions" aria-selected="false">
+                        <i class="fas fa-file-invoice me-2"></i>
+                        Resoluciones
+                    </button>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                    <button class="nav-link w-100 d-flex justify-content-center align-items-center px-3 py-2 fw-bold"
+                        id="pos-template-tab" data-bs-toggle="tab" data-bs-target="#pos-template" type="button" role="tab"
+                        aria-controls="pos-template" aria-selected="false">
+                        <i class="fas fa-palette me-2"></i>
+                        Plantilla PDF
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="posSubTabsContent">
+                <div class="tab-pane fade show active" id="pos-list" role="tabpanel" aria-labelledby="pos-list-tab">
+                    @include('company.documents', [
+                        'documents' => $posData['documents'] ?? collect(),
+                        'resolution_credit_notes' => collect(),
+                        'company' => $company,
+                        'company_idnumber' => $company->identification_number,
+                        'token_company' => $company->user->api_token ?? null,
+                        'type' => 'pos'
+                    ])
+                </div>
+                <div class="tab-pane fade" id="pos-production" role="tabpanel" aria-labelledby="pos-production-tab">
+                    @include('company.production.pos.index', [
+                        'company' => $company,
+                        'environmentStatus' => $environmentStatuses['pos'],
+                        'typeDocuments' => $typeDocuments
+                    ])
+                </div>
+                <div class="tab-pane fade" id="pos-resolutions" role="tabpanel" aria-labelledby="pos-resolutions-tab">
+                    @include('company.production._resolutions_tab', [
+                        'company' => $company,
+                        'type' => 'pos',
+                        'resolutionsHab' => $posData['resolutionsHab'] ?? collect(),
+                        'resolutionsProd' => $posData['resolutionsProd'] ?? collect(),
+                        'resolutionTypeDocuments' => $posData['resolutionTypeDocuments'] ?? collect(),
+                    ])
+                </div>
+                <div class="tab-pane fade" id="pos-template" role="tabpanel" aria-labelledby="pos-template-tab">
+                    <div class="p-3">
+                        <h5 class="mb-3">Plantilla de Representación Gráfica</h5>
+                        <p class="text-muted mb-4">Seleccione la plantilla con la que se generará el PDF de Documentos Equivalentes para esta empresa.</p>
+                        <div class="row" id="pos-template-gallery">
+                            <!-- Templates will be loaded via AJAX -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
             </div>
         </div>
 

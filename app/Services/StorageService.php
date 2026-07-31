@@ -15,9 +15,18 @@ class StorageService
      */
     public static function setCompany($company): void
     {
-        // Community Edition: el almacenamiento por empresa (S3/dual) es una
-        // funcionalidad Enterprise. Aqui el almacenamiento es siempre local.
-        static::$currentCompanyStorageMode = null;
+        if ($company === null) {
+            static::$currentCompanyStorageMode = null;
+            return;
+        }
+
+        // Per-company storage mode override
+        $mode = $company->storage_mode ?? null;
+        if ($mode && in_array($mode, ['local', 's3', 'dual'])) {
+            static::$currentCompanyStorageMode = $mode;
+        } else {
+            static::$currentCompanyStorageMode = null;
+        }
     }
 
     public static function clearCompany(): void
@@ -31,7 +40,17 @@ class StorageService
      */
     protected static function resolveMode(): string
     {
-        // Community Edition: almacenamiento siempre local (S3/dual es Enterprise).
+        // Per-company override takes priority
+        if (static::$currentCompanyStorageMode !== null) {
+            return static::$currentCompanyStorageMode;
+        }
+
+        // Fall back to global config
+        $envMode = env('STORAGE_MODE', 'local');
+        if (in_array($envMode, ['local', 's3', 'dual'])) {
+            return $envMode;
+        }
+
         return 'local';
     }
 

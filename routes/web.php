@@ -20,13 +20,13 @@ Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
-// Registro y reseteo de contraseña deshabilitados según configuración original
-// Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
-// Route::post('register', 'Auth\RegisterController@register');
-// Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-// Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-// Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-// Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+// Registro y reseteo de contraseña
+Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post('register', 'Auth\RegisterController@register');
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 // rutas listado de documentos
 Route::get('/ownerapilogin', 'OwnerApiLoginController@ShowOwnerLoginForm');
@@ -67,14 +67,36 @@ Route::group(['middleware' => ['auth', 'company.web.access']], function() {
     Route::get('/company/{company}', 'HomeController@company')->name('company');
     Route::get('/company/{company}/document/{cufe}', 'HomeController@getXml')->name('getXml');
     Route::get('/company/{company}/events', 'HomeController@events')->name('company.events');
+    Route::get('/companies/{company}', function($company) {
+        return redirect()->route('company', $company);
+    });
     Route::get('/documents', 'HomeController@listDocuments')->name('listdocuments');
     Route::get('/taxes', 'HomeController@listTaxes')->name('listtaxes');
     Route::get('/listconfigurations', 'HomeController@listConfigurations')->name('listconfigurations');
     Route::put('/companies/{company}', 'HomeController@update')->name('companies.update');
+    Route::put('/companies/{company}/toggle-state', 'HomeController@toggleState')->name('companies.toggle-state');
+    Route::delete('/companies/{company}', 'HomeController@destroy')->name('companies.destroy');
+    Route::put('/companies/{company}/environment', 'HomeController@changeEnvironment')->name('companies.environment');
 
     // emails
     Route::get('companies/{company}/configuration/email', 'CompanyUserController@emailIndex')->name('company.email.index');
     Route::post('companies/{company}/configuration/email', 'CompanyUserController@emailStore')->name('company.email.store');
+
+    // users management
+    Route::get('companies/{company}/users', 'CompanyUserController@usersIndex')->name('company.users.index');
+    Route::post('companies/{company}/users', 'CompanyUserController@usersStore')->name('company.users.store');
+    Route::delete('companies/{company}/users/{user}', 'CompanyUserController@usersDestroy')->name('company.users.destroy');
+
+    // app access
+    Route::get('companies/{company}/app-access', 'CompanyUserController@appAccessIndex')->name('company.app-access.index');
+    Route::post('companies/{company}/app-access', 'CompanyUserController@appAccessStore')->name('company.app-access.store');
+    Route::post('companies/{company}/app-access/generate-token', 'CompanyUserController@appAccessGenerateToken')->name('company.app-access.generate-token');
+    Route::delete('companies/{company}/app-access/devices/{device}', 'CompanyUserController@appAccessRemoveDevice')->name('company.app-access.remove-device');
+
+    // storage S3
+    Route::get('companies/{company}/storage', 'CompanyUserController@storageIndex')->name('company.storage.index');
+    Route::post('companies/{company}/storage', 'CompanyUserController@storageStore')->name('company.storage.store');
+    Route::post('companies/{company}/storage/test', 'CompanyUserController@storageTest')->name('company.storage.test');
 
     // resoluciones
     Route::get('companies/{company}/configuration/resolutions', 'ResolutionController@index')->name('company.resolutions.index');
@@ -115,6 +137,15 @@ Route::group(['middleware' => ['auth', 'company.web.access']], function() {
 
     // logs
     Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs');
+
+    // monitoreo
+    Route::get('monitoring', 'HomeController@monitoring')->name('monitoring');
+
+    // backups
+    Route::get('backups', 'HomeController@backups')->name('backups');
+    Route::post('backups/create', 'HomeController@backupCreate')->name('backups.create');
+    Route::get('backups/download/{file}', 'HomeController@backupDownload')->name('backups.download');
+    Route::delete('backups/{file}', 'HomeController@backupDelete')->name('backups.delete');
 
 });
 
